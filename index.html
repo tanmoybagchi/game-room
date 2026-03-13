@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game Room</title>
+  <link rel="icon" href="favicon.svg">
+  <link rel="stylesheet" href="css/shared.css">
+  <script type="module" src="js/components/game-card.js"></script>
+  <style>
+    .dashboard {
+      padding: 2rem 0;
+    }
+
+    .dashboard h2 {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      color: var(--text-secondary);
+      font-weight: 500;
+      margin-bottom: 1.25rem;
+    }
+
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1.25rem;
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <h1>🎲 Game Room</h1>
+  </header>
+
+  <main class="container dashboard">
+    <div class="games-grid">
+      <game-card
+        name="FreeCell"
+        description="Strategic card sorting"
+        href="games/freecell/"
+        icon='<span class="suit-black">♠</span><span class="suit-red">♥</span><span class="suit-red">♦</span><span class="suit-black">♣</span>'
+      ></game-card>
+      <game-card
+        name="Klondike Solitaire"
+        description="The classic card game"
+        href="games/klondike-solitaire/"
+        icon="🃏"
+      ></game-card>
+      <game-card
+        name="Pyramid"
+        description="Pair cards that sum to 13"
+        href="games/pyramid/"
+        icon="🔺"
+      ></game-card>
+      <game-card
+        name="Spider Solitaire"
+        description="Stack eight full suits"
+        href="games/spider-solitaire/"
+        icon='<img src="images/spider.svg" alt="">'
+      ></game-card>
+      <game-card
+        name="Sudoku"
+        description="Fill the grid with 1–9"
+        href="games/sudoku/"
+        icon="🔢"
+      ></game-card>
+      <game-card
+        name="TriPeaks"
+        description="Clear three peaks ±1 at a time"
+        href="games/tripeaks/"
+        icon="🗻"
+      ></game-card>
+      <game-card
+        name="Yukon"
+        description="Move any face-up card"
+        href="games/yukon/"
+        icon="❄️"
+      ></game-card>
+    </div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,119 @@
+/* ===== Spider Solitaire-specific overrides (mobile-first) ===== */
+.game-board {
+  max-width: 1100px;
+}
+
+/* Card sizing (mobile 5-col base) */
+:root {
+  --card-w: clamp(55px, 17vw, 75px);
+  --card-h: clamp(80px, 25vw, 108px);
+  --card-radius: clamp(3px, 0.6vw, 7px);
+  --card-font: clamp(1.8rem, 5.5vw, 2.6rem);
+  --card-suit-font: clamp(1.4rem, 4.5vw, 2rem);
+  --tableau-offset: clamp(16px, 4.5vw, 24px);
+  --tableau-offset-down: clamp(8px, 2vw, 12px);
+}
+
+/* ===== Top row layout ===== */
+.top-row {
+  justify-content: flex-end;
+  gap: clamp(0.5rem, 1vw, 1rem);
+  margin-bottom: clamp(0.4rem, 1vw, 0.75rem);
+}
+
+.completed-area {
+  display: flex;
+  gap: clamp(0.2rem, 0.5vw, 0.4rem);
+  margin-right: auto;
+}
+
+.completed-marker {
+  width: calc(var(--card-w) * 0.5);
+  height: calc(var(--card-h) * 0.5);
+  background: var(--bg-secondary);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--card-radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(0.7rem, 1.5vw, 1rem);
+  color: var(--accent);
+}
+
+.stock-area {
+  display: flex;
+  gap: clamp(0.2rem, 0.5vw, 0.4rem);
+}
+
+.stock-pile {
+  cursor: pointer;
+}
+
+.stock-pile::after {
+  content: '';
+  width: clamp(1.2rem, 2.5vw, 1.6rem);
+  height: clamp(1.2rem, 2.5vw, 1.6rem);
+  background: url('../../images/spider.svg') center/contain no-repeat;
+  opacity: 0.5;
+  position: absolute;
+}
+
+.stock-pile.has-cards::after {
+  display: none;
+}
+
+/* ===== Tableau (mobile: 2 rows of 5) ===== */
+.tableau {
+  flex-wrap: wrap;
+  gap: clamp(0.3rem, 1vw, 0.5rem);
+  row-gap: clamp(5rem, 15vw, 8rem);
+}
+
+.tableau-col {
+  flex: 0 0 calc(20% - 0.5rem);
+  min-width: 0;
+}
+
+/* Stock remaining indicator */
+.stock-count {
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.55rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+/* ===== Desktop: 10 columns, fixed height ===== */
+@media (min-width: 601px) {
+  html, body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .game-board {
+    overflow: hidden;
+    height: calc(100vh - 3.5rem);
+  }
+
+  :root {
+    --card-w: clamp(42px, 8.5vw, 80px);
+    --card-h: clamp(62px, 12vw, 115px);
+    --card-font: clamp(1.3rem, 3.5vw, 2.4rem);
+    --card-suit-font: clamp(1.1rem, 3vw, 2rem);
+    --tableau-offset: clamp(14px, 2.2vw, 22px);
+    --tableau-offset-down: clamp(6px, 1.2vw, 12px);
+  }
+
+  .tableau {
+    flex-wrap: nowrap;
+    gap: clamp(0.15rem, 0.4vw, 0.35rem);
+    row-gap: 0;
+  }
+
+  .tableau-col {
+    flex: 1;
+    min-width: auto;
+  }
+}

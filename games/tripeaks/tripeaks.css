@@ -1,0 +1,98 @@
+/* ===== TriPeaks-specific overrides ===== */
+.game-board {
+  max-width: 650px;
+}
+
+:root {
+  --card-w: clamp(38px, 10vw, 65px);
+  --card-h: clamp(54px, 14vw, 93px);
+  --card-radius: clamp(3px, 0.6vw, 7px);
+  --card-font: clamp(1.1rem, 3vw, 1.8rem);
+  --card-suit-font: clamp(0.9rem, 2.5vw, 1.4rem);
+  --tableau-offset: 0;
+  --tableau-offset-down: 0;
+}
+
+/* ===== Peaks layout ===== */
+.peaks {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(2px, 0.4vw, 5px);
+  margin-bottom: clamp(0.5rem, 2vw, 1rem);
+}
+
+.peak-row {
+  display: flex;
+  justify-content: center;
+}
+
+.peak-slot {
+  position: relative;
+  width: calc(var(--card-w) * 0.55);
+  height: var(--card-h);
+  flex-shrink: 0;
+}
+
+.peak-slot .card {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.peak-slot.removed .card {
+  display: none;
+}
+
+.card.blocked {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.card.playable {
+  cursor: pointer;
+}
+
+.card.playable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 0 2px var(--accent), 0 4px 12px var(--shadow);
+}
+
+/* ===== Bottom row ===== */
+.bottom-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0 clamp(0.25rem, 1vw, 0.5rem);
+}
+
+.stock-waste {
+  display: flex;
+  gap: clamp(0.35rem, 1vw, 0.75rem);
+}
+
+.stock-pile {
+  cursor: pointer;
+}
+
+.stock-pile::after {
+  content: '↻';
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  opacity: 0.5;
+  position: absolute;
+}
+
+.stock-pile.has-cards::after {
+  display: none;
+}
+
+.stock-pile .card,
+.waste-pile .card {
+  top: 0;
+}
+
+@media (min-width: 501px) {
+  .peak-slot {
+    width: calc(var(--card-w) * 0.58);
+  }
+}

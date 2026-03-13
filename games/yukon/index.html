@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Yukon — Game Room</title>
+  <link rel="icon" href="../../favicon.svg">
+  <link rel="stylesheet" href="../../css/shared.css">
+  <link rel="stylesheet" href="../../css/game-shared.css">
+  <link rel="stylesheet" href="yukon.css">
+  <script src="../../js/shared/wake-lock.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <h1>❄️ Yukon</h1>
+    <div class="header-controls">
+      <button class="btn" id="btn-undo" disabled>⟲ <span class="btn-label">Undo</span></button>
+      <button class="btn" id="btn-new-game">❄️ <span class="btn-label">New Game</span></button>
+      <button class="btn" id="btn-help" aria-label="How to play">ℹ</button>
+      <a href="../../" class="btn" aria-label="Home">🏠</a>
+    </div>
+  </header>
+
+  <dialog id="help-modal" class="help-modal">
+    <div class="help-modal-content">
+      <div class="help-modal-header">
+        <h2>How to Play</h2>
+        <button class="btn help-close" id="btn-help-close" aria-label="Close">&times;</button>
+      </div>
+      <p><strong>Goal:</strong> Move all 52 cards to the four foundation piles, sorted by suit from Ace to King.</p>
+      <dl>
+        <dt>Tableau (7 columns)</dt>
+        <dd>Stack cards in descending order, alternating colors. Unlike Klondike, <strong>any face-up card</strong> can be moved — the cards below it come along, even if not in sequence.</dd>
+        <dt>Empty Columns</dt>
+        <dd>Only Kings (with any cards on top) can be placed on empty columns.</dd>
+        <dt>Foundations</dt>
+        <dd>Build each suit up from Ace to King. Double-click a card to auto-send it.</dd>
+        <dt>No Stock</dt>
+        <dd>All cards are dealt at the start — there is no stock pile. Plan your moves carefully!</dd>
+      </dl>
+      <p><strong>Controls:</strong> Drag cards or tap to select then tap a destination. Use <kbd>Undo</kbd> to take back a move.</p>
+    </div>
+  </dialog>
+
+  <main id="game-board" class="game-board">
+    <div class="top-row">
+      <div class="foundations">
+        <div class="pile foundation" data-foundation="0" aria-label="Foundation 1"></div>
+        <div class="pile foundation" data-foundation="1" aria-label="Foundation 2"></div>
+        <div class="pile foundation" data-foundation="2" aria-label="Foundation 3"></div>
+        <div class="pile foundation" data-foundation="3" aria-label="Foundation 4"></div>
+      </div>
+    </div>
+
+    <div class="tableau">
+      <div class="pile tableau-col" data-col="0"></div>
+      <div class="pile tableau-col" data-col="1"></div>
+      <div class="pile tableau-col" data-col="2"></div>
+      <div class="pile tableau-col" data-col="3"></div>
+      <div class="pile tableau-col" data-col="4"></div>
+      <div class="pile tableau-col" data-col="5"></div>
+      <div class="pile tableau-col" data-col="6"></div>
+    </div>
+  </main>
+
+  <div id="win-overlay" class="win-overlay" hidden>
+    <div class="win-content">
+      <h2>🎉 You Win!</h2>
+      <button class="btn win-btn" id="btn-play-again">Play Again</button>
+    </div>
+  </div>
+
+  <script type="module" src="yukon.js"></script>
+</body>
+</html>

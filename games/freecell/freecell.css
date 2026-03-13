@@ -1,0 +1,75 @@
+/* ===== FreeCell-specific overrides ===== */
+.game-board {
+  max-width: 960px;
+  overflow-x: hidden;
+}
+
+/* Card sizing (smaller for 8 columns) */
+:root {
+  --card-w: clamp(50px, 10vw, 85px);
+  --card-h: clamp(72px, 14vw, 122px);
+  --card-radius: clamp(4px, 0.8vw, 8px);
+  --card-font: clamp(1.6rem, 4vw, 2.6rem);
+  --card-suit-font: clamp(1.4rem, 3.5vw, 2.4rem);
+  --tableau-offset: clamp(18px, 3.2vw, 28px);
+}
+
+/* ===== Free cells ===== */
+.free-cells {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(0.35rem, 2vw, 0.75rem);
+}
+
+.free-cell .card {
+  top: 0;
+}
+
+.tableau {
+  gap: clamp(0.2rem, 0.6vw, 0.45rem);
+}
+
+/* ===== Mobile-first: stacked free cells above foundations ===== */
+.top-row {
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.foundations {
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(0.35rem, 2vw, 0.75rem);
+}
+
+.row-label {
+  flex-basis: 100%;
+  text-align: center;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  opacity: 0.7;
+}
+
+/* ===== Desktop: side-by-side layout ===== */
+@media (min-width: 601px) {
+  .top-row {
+    flex-direction: row;
+    align-items: stretch;
+    gap: 0;
+  }
+
+  .free-cells,
+  .foundations {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    gap: clamp(0.35rem, 1vw, 0.75rem);
+  }
+
+  .row-label {
+    display: none;
+  }
+}

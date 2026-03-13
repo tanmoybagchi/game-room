@@ -1,0 +1,26 @@
+/* ===== Yukon-specific overrides ===== */
+.game-board {
+  max-width: 900px;
+}
+
+:root {
+  --card-w: clamp(55px, 11vw, 90px);
+  --card-h: clamp(80px, 15.5vw, 130px);
+  --card-radius: clamp(4px, 0.8vw, 8px);
+  --card-font: clamp(1.8rem, 4.5vw, 3rem);
+  --card-suit-font: clamp(1.6rem, 4vw, 2.8rem);
+  --tableau-offset: clamp(20px, 3.5vw, 30px);
+  --tableau-offset-down: clamp(14px, 2.5vw, 22px);
+}
+
+.top-row {
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1rem;
+}
+
+.tableau {
+  gap: clamp(0.25rem, 0.8vw, 0.5rem);
+}
+
+

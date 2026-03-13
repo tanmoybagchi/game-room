@@ -1,0 +1,91 @@
+/* ===== Pyramid-specific overrides ===== */
+.game-board {
+  max-width: 600px;
+}
+
+:root {
+  --card-w: clamp(42px, 12vw, 70px);
+  --card-h: clamp(60px, 17vw, 100px);
+  --card-radius: clamp(3px, 0.6vw, 7px);
+  --card-font: clamp(1.2rem, 3.5vw, 2rem);
+  --card-suit-font: clamp(1rem, 3vw, 1.6rem);
+  --tableau-offset: 0;
+  --tableau-offset-down: 0;
+}
+
+/* ===== Top row ===== */
+.top-row {
+  justify-content: flex-start;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: clamp(0.5rem, 2vw, 1rem);
+}
+
+.stock-waste {
+  display: flex;
+  gap: clamp(0.35rem, 1vw, 0.75rem);
+}
+
+.stock-pile {
+  cursor: pointer;
+}
+
+.stock-pile::after {
+  content: '↻';
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  opacity: 0.5;
+  position: absolute;
+}
+
+.stock-pile.has-cards::after {
+  display: none;
+}
+
+.stock-pile .card,
+.waste-pile .card {
+  top: 0;
+}
+
+/* ===== Pyramid layout ===== */
+.pyramid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(2px, 0.5vw, 6px);
+}
+
+.pyramid-row {
+  display: flex;
+  justify-content: center;
+  gap: clamp(2px, 0.5vw, 6px);
+}
+
+.pyramid-slot {
+  position: relative;
+  width: var(--card-w);
+  height: var(--card-h);
+  flex-shrink: 0;
+}
+
+.pyramid-slot .card {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.pyramid-slot.removed {
+  visibility: hidden;
+}
+
+.card.blocked {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.card.pair-selected {
+  box-shadow: 0 0 0 3px var(--accent), 0 4px 12px var(--shadow);
+  transform: translateY(-3px);
+  z-index: 100;
+}
+
+

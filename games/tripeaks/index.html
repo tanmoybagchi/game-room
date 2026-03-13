@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>TriPeaks — Game Room</title>
+  <link rel="icon" href="../../favicon.svg">
+  <link rel="stylesheet" href="../../css/shared.css">
+  <link rel="stylesheet" href="../../css/game-shared.css">
+  <link rel="stylesheet" href="tripeaks.css">
+  <script src="../../js/shared/wake-lock.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <h1>🗻 TriPeaks</h1>
+    <div class="header-controls">
+      <button class="btn" id="btn-undo" disabled>⟲ <span class="btn-label">Undo</span></button>
+      <button class="btn" id="btn-new-game">🗻 <span class="btn-label">New Game</span></button>
+      <button class="btn" id="btn-help" aria-label="How to play">ℹ</button>
+      <a href="../../" class="btn" aria-label="Home">🏠</a>
+    </div>
+  </header>
+
+  <dialog id="help-modal" class="help-modal">
+    <div class="help-modal-content">
+      <div class="help-modal-header">
+        <h2>How to Play</h2>
+        <button class="btn help-close" id="btn-help-close" aria-label="Close">&times;</button>
+      </div>
+      <p><strong>Goal:</strong> Clear all three peaks by removing cards that are one rank higher or lower than the waste card.</p>
+      <dl>
+        <dt>Tableau</dt>
+        <dd>Three overlapping peaks of cards. A card is playable when no cards overlap it from the row below.</dd>
+        <dt>Playing Cards</dt>
+        <dd>Click an exposed card that is ±1 rank from the top waste card. Aces wrap with Kings (A↔K).</dd>
+        <dt>Stock</dt>
+        <dd>Click the stock pile to draw a new waste card when no moves are available.</dd>
+        <dt>Streaks</dt>
+        <dd>Chain together multiple cards without drawing from stock for longer combos!</dd>
+      </dl>
+      <p><strong>Controls:</strong> Tap an exposed card to play it. Tap the stock to draw.</p>
+    </div>
+  </dialog>
+
+  <main id="game-board" class="game-board">
+    <div id="peaks" class="peaks"></div>
+    <div class="bottom-row">
+      <div class="stock-waste">
+        <div id="stock" class="pile stock-pile" aria-label="Stock pile"></div>
+        <div id="waste" class="pile waste-pile" aria-label="Waste pile"></div>
+      </div>
+    </div>
+  </main>
+
+  <div id="win-overlay" class="win-overlay" hidden>
+    <div class="win-content">
+      <h2>🎉 You Win!</h2>
+      <button class="btn win-btn" id="btn-play-again">Play Again</button>
+    </div>
+  </div>
+
+  <script type="module" src="tripeaks.js"></script>
+</body>
+</html>

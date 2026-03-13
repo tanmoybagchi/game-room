@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Pyramid — Game Room</title>
+  <link rel="icon" href="../../favicon.svg">
+  <link rel="stylesheet" href="../../css/shared.css">
+  <link rel="stylesheet" href="../../css/game-shared.css">
+  <link rel="stylesheet" href="pyramid.css">
+  <script src="../../js/shared/wake-lock.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <h1>🔺 Pyramid</h1>
+    <div class="header-controls">
+      <button class="btn" id="btn-undo" disabled>⟲ <span class="btn-label">Undo</span></button>
+      <button class="btn" id="btn-new-game">🔺 <span class="btn-label">New Game</span></button>
+      <button class="btn" id="btn-help" aria-label="How to play">ℹ</button>
+      <a href="../../" class="btn" aria-label="Home">🏠</a>
+    </div>
+  </header>
+
+  <dialog id="help-modal" class="help-modal">
+    <div class="help-modal-content">
+      <div class="help-modal-header">
+        <h2>How to Play</h2>
+        <button class="btn help-close" id="btn-help-close" aria-label="Close">&times;</button>
+      </div>
+      <p><strong>Goal:</strong> Remove all cards from the pyramid by pairing cards that add up to 13.</p>
+      <dl>
+        <dt>Pairing</dt>
+        <dd>Select two exposed cards whose ranks total 13. Kings (13) are removed alone. A = 1, J = 11, Q = 12, K = 13.</dd>
+        <dt>Exposed Cards</dt>
+        <dd>A card is exposed when no cards overlap it from the row below.</dd>
+        <dt>Stock &amp; Waste</dt>
+        <dd>Click the stock to draw a card to the waste. The waste card can be paired with any exposed pyramid card.</dd>
+      </dl>
+      <p><strong>Controls:</strong> Tap a card to select it, then tap another to pair. Tap a King to remove it instantly.</p>
+    </div>
+  </dialog>
+
+  <main id="game-board" class="game-board">
+    <div class="top-row">
+      <div class="stock-waste">
+        <div id="stock" class="pile stock-pile" aria-label="Stock pile"></div>
+        <div id="waste" class="pile waste-pile" aria-label="Waste pile"></div>
+      </div>
+    </div>
+    <div id="pyramid" class="pyramid"></div>
+  </main>
+
+  <div id="win-overlay" class="win-overlay" hidden>
+    <div class="win-content">
+      <h2>🎉 You Win!</h2>
+      <button class="btn win-btn" id="btn-play-again">Play Again</button>
+    </div>
+  </div>
+
+  <script type="module" src="pyramid.js"></script>
+</body>
+</html>
