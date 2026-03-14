@@ -4,7 +4,7 @@
 
 import {
   saveToStorage, loadFromStorage, clearStorage,
-  wireHelpModal
+  wireHelpModal, showWinOverlay, hideWinOverlay
 } from '../../js/shared/card-engine.js';
 
 (() => {
@@ -146,7 +146,7 @@ import {
     notesMode = false;
     history = [];
     $btnNotes.classList.remove('active');
-    $winOverlay.hidden = true;
+    hideWinOverlay($winOverlay);
     render();
     saveState();
   }
@@ -254,7 +254,7 @@ import {
   function checkWin() {
     if (board.some(v => v === 0)) return;
     if (getConflicts().size > 0) return;
-    $winOverlay.hidden = false;
+    showWinOverlay($winOverlay);
   }
 
   // ============================================================

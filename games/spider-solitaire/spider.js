@@ -446,7 +446,7 @@ import {
 
       const colEl = $tableauCols[touchDrag.col];
       const cards = colEl.querySelectorAll('.card');
-      for (let i = touchDrag.cardIndex; i < cards.length; i++) cards[i].style.opacity = '0.3';
+      for (let i = touchDrag.cardIndex; i < cards.length; i++) cards[i].style.opacity = '0';
     }
 
     if (touchDrag.moved && touchGhost) {

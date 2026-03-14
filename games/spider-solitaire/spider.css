@@ -10,7 +10,7 @@
   --card-radius: clamp(3px, 0.6vw, 7px);
   --card-font: clamp(1.8rem, 5.5vw, 2.6rem);
   --card-suit-font: clamp(1.4rem, 4.5vw, 2rem);
-  --tableau-offset: clamp(16px, 4.5vw, 24px);
+  --tableau-offset: clamp(28px, 6.5vw, 40px);
   --tableau-offset-down: clamp(8px, 2vw, 12px);
 }
 
@@ -102,7 +102,7 @@
     --card-h: clamp(62px, 12vw, 115px);
     --card-font: clamp(1.3rem, 3.5vw, 2.4rem);
     --card-suit-font: clamp(1.1rem, 3vw, 2rem);
-    --tableau-offset: clamp(14px, 2.2vw, 22px);
+    --tableau-offset: clamp(22px, 3.5vw, 34px);
     --tableau-offset-down: clamp(6px, 1.2vw, 12px);
   }
 

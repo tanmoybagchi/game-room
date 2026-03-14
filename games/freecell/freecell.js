@@ -576,9 +576,9 @@ import {
       if (touchDrag.source === 'tableau') {
         const colEl = $tableauCols[touchDrag.col];
         const cards = colEl.querySelectorAll('.card');
-        for (let i = touchDrag.cardIndex; i < cards.length; i++) cards[i].style.opacity = '0.3';
+        for (let i = touchDrag.cardIndex; i < cards.length; i++) cards[i].style.opacity = '0';
       } else {
-        touchDrag.el.style.opacity = '0.3';
+        touchDrag.el.style.opacity = '0';
       }
     }
 
