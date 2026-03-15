@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Word Search — Game Room</title>
+  <link rel="icon" href="../../favicon.svg">
+  <link rel="manifest" href="../../manifest.json">
+  <script>if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');</script>
+  <link rel="stylesheet" href="../../css/shared.css">
+  <link rel="stylesheet" href="../../css/game-shared.css">
+  <link rel="stylesheet" href="word-search.css">
+</head>
+<body>
+  <header class="site-header">
+    <h1>🔍 Word Search</h1>
+    <div class="header-controls">
+      <button class="btn" id="btn-new-game">🔄 <span class="btn-label">New Game</span></button>
+      <button class="btn" id="btn-help" aria-label="How to play">ℹ</button>
+      <a href="../../" class="btn" aria-label="Home">🏠</a>
+    </div>
+  </header>
+
+  <dialog id="help-modal" class="help-modal">
+    <div class="help-modal-content">
+      <div class="help-modal-header">
+        <h2>How to Play</h2>
+        <button class="btn help-close" id="btn-help-close" aria-label="Close">&times;</button>
+      </div>
+      <p><strong>Goal:</strong> Find all the hidden words in the grid.</p>
+      <dl>
+        <dt>Selecting</dt>
+        <dd>Click/tap a letter and drag to the last letter to highlight a word. Words can go horizontally, vertically, or diagonally.</dd>
+        <dt>Found Words</dt>
+        <dd>Found words are crossed off the list and highlighted on the grid.</dd>
+      </dl>
+    </div>
+  </dialog>
+
+  <main id="game-board" class="game-board">
+    <div id="word-list" class="word-list"></div>
+    <div id="grid" class="ws-grid"></div>
+  </main>
+
+  <div id="win-overlay" class="win-overlay" hidden>
+    <div class="win-content">
+      <h2>🎉 All Words Found!</h2>
+      <button class="btn win-btn" id="btn-play-again">Play Again</button>
+    </div>
+  </div>
+
+  <script type="module" src="word-search.js"></script>
+</body>
+</html>

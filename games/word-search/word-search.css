@@ -1,0 +1,138 @@
+/* ===== Word Search styles ===== */
+
+#theme {
+  font-size: 0.85rem;
+  appearance: auto;
+  cursor: pointer;
+}
+
+/* ===== Layout ===== */
+.game-board {
+  max-width: 700px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(0.5rem, 2vw, 1rem);
+  overflow: hidden;
+}
+
+/* ===== Grid ===== */
+.ws-grid {
+  display: grid;
+  gap: 0;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+  position: relative;
+  width: min(96vw, 480px);
+}
+
+.ws-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font-size: clamp(0.95rem, 5.5vw, 1.3rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.1s;
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.ws-cell:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.ws-cell.selecting {
+  background: rgba(240, 192, 64, 0.35);
+}
+
+.ws-cell.found {
+  color: #fff;
+  z-index: 1;
+}
+
+.ws-cell.found-flash {
+  animation: cellFlash 0.3s ease;
+}
+
+@keyframes cellFlash {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+/* ===== SVG overlay for word outlines ===== */
+.ws-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.word-outline {
+  stroke: none;
+  opacity: 0.82;
+}
+
+.word-outline.flash {
+  animation: outlineFlash 0.5s ease;
+}
+
+@keyframes outlineFlash {
+  0% { opacity: 0; transform: scale(0.9); }
+  50% { opacity: 0.9; }
+  100% { opacity: 0.82; }
+}
+
+/* ===== Word List ===== */
+.word-list {
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  gap: 0.3rem 1.2rem;
+  justify-content: center;
+  justify-items: center;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius);
+  padding: 0.75rem 1.25rem;
+  width: min(96vw, 480px);
+}
+
+.wl-word {
+  font-size: clamp(0.85rem, 4vw, 1.1rem);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--text-secondary);
+  transition: color 0.2s;
+  white-space: nowrap;
+}
+
+.wl-word.found {
+  text-decoration: line-through;
+  color: #538d4e;
+}
+
+/* ===== Win banner ===== */
+.win-banner {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #53d769;
+  margin-top: 0.5rem;
+  animation: popIn 0.4s ease;
+}
+
+@keyframes popIn {
+  0% { transform: scale(0.5); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}

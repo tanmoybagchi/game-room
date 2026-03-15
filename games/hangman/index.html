@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Hangman — Game Room</title>
+  <link rel="icon" href="../../favicon.svg">
+  <link rel="manifest" href="../../manifest.json">
+  <script>if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');</script>
+  <link rel="stylesheet" href="../../css/shared.css">
+  <link rel="stylesheet" href="../../css/game-shared.css">
+  <link rel="stylesheet" href="hangman.css">
+</head>
+<body>
+  <header class="site-header">
+    <h1>☠️ Hangman</h1>
+    <div class="header-controls">
+      <button class="btn" id="btn-new-game">🔄 <span class="btn-label">New Game</span></button>
+      <button class="btn" id="btn-help" aria-label="How to play">ℹ</button>
+      <a href="../../" class="btn" aria-label="Home">🏠</a>
+    </div>
+  </header>
+
+  <dialog id="help-modal" class="help-modal">
+    <div class="help-modal-content">
+      <div class="help-modal-header">
+        <h2>How to Play</h2>
+        <button class="btn help-close" id="btn-help-close" aria-label="Close">&times;</button>
+      </div>
+      <p><strong>Goal:</strong> Guess the hidden word before the stick figure is fully drawn.</p>
+      <dl>
+        <dt>Guessing</dt>
+        <dd>Tap a letter to guess. Correct letters are revealed in the word. Wrong guesses draw part of the hangman.</dd>
+        <dt>Winning</dt>
+        <dd>Reveal all letters before 6 wrong guesses to win!</dd>
+      </dl>
+    </div>
+  </dialog>
+
+  <main id="game-board" class="game-board">
+    <svg id="hangman-svg" class="hangman-svg" viewBox="0 0 200 220">
+      <!-- gallows -->
+      <line x1="20" y1="210" x2="180" y2="210" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      <line x1="60" y1="210" x2="60" y2="20" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      <line x1="60" y1="20" x2="140" y2="20" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      <line x1="140" y1="20" x2="140" y2="45" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      <!-- body parts (hidden initially) -->
+      <circle id="hm-head" cx="140" cy="60" r="15" class="hm-part" stroke="#fff" stroke-width="3" fill="none"/>
+      <line id="hm-body" x1="140" y1="75" x2="140" y2="130" class="hm-part" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      <line id="hm-larm" x1="140" y1="90" x2="110" y2="115" class="hm-part" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      <line id="hm-rarm" x1="140" y1="90" x2="170" y2="115" class="hm-part" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      <line id="hm-lleg" x1="140" y1="130" x2="115" y2="165" class="hm-part" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      <line id="hm-rleg" x1="140" y1="130" x2="165" y2="165" class="hm-part" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+
+    <div id="word-display" class="word-display"></div>
+    <div id="letter-buttons" class="letter-buttons"></div>
+  </main>
+
+  <div id="win-overlay" class="win-overlay" hidden>
+    <div class="win-content">
+      <h2>🎉 You Win!</h2>
+      <button class="btn win-btn" id="btn-play-again">Play Again</button>
+    </div>
+  </div>
+
+  <script type="module" src="hangman.js"></script>
+</body>
+</html>

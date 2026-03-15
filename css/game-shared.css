@@ -257,6 +257,8 @@ html, body {
   animation-timing-function: ease-out;
   animation-fill-mode: forwards;
   pointer-events: none;
+  text-shadow: 0 0 6px currentColor, 0 0 14px currentColor;
+  font-weight: bold;
 }
 
 /* ===== Help Modal ===== */

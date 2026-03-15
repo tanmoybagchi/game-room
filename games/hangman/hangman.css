@@ -1,0 +1,138 @@
+/* ===== Hangman-specific styles ===== */
+
+.game-board {
+  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(0.5rem, 2vw, 1rem);
+}
+
+#category {
+  font-size: 0.85rem;
+  appearance: auto;
+  cursor: pointer;
+}
+
+/* ===== Hangman SVG ===== */
+.hangman-svg {
+  width: min(55vw, 220px);
+  height: auto;
+}
+
+.hm-part {
+  display: none;
+}
+
+.hm-part.show {
+  display: block;
+}
+
+/* ===== Word Display ===== */
+.word-display {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+}
+
+.letter-slot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(28px, 8vw, 40px);
+  height: clamp(38px, 10vw, 52px);
+  border-bottom: 3px solid #fff;
+  font-size: clamp(1.2rem, 4vw, 1.8rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #fff;
+  transition: color 0.3s;
+}
+
+.letter-slot.space {
+  border-bottom: none;
+  width: clamp(14px, 4vw, 20px);
+}
+
+.letter-slot.revealed {
+  animation: popIn 0.3s ease;
+}
+
+.letter-slot.wrong-reveal {
+  color: #e74c3c;
+}
+
+@keyframes popIn {
+  0% { transform: scale(0.5); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* ===== Hint ===== */
+.hint-label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  min-height: 1.4rem;
+  text-transform: capitalize;
+}
+
+/* ===== Letter Buttons ===== */
+.letter-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  max-width: 420px;
+}
+
+.letter-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(32px, 8vw, 42px);
+  height: clamp(38px, 9vw, 48px);
+  border: none;
+  border-radius: 6px;
+  background: var(--bg-card);
+  color: var(--text-on-card);
+  font-size: clamp(0.85rem, 2.5vw, 1rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: background 0.15s, opacity 0.15s, transform 0.15s;
+}
+
+.letter-btn:hover:not(:disabled) {
+  background: var(--bg-card-hover);
+  transform: scale(1.08);
+}
+
+.letter-btn:disabled {
+  cursor: default;
+}
+
+.letter-btn.correct {
+  background: #538d4e;
+  color: #fff;
+  opacity: 0.7;
+}
+
+.letter-btn.wrong {
+  background: #3a3a3c;
+  color: #888;
+  opacity: 0.5;
+}
+
+/* ===== Result message ===== */
+.result-msg {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-top: 0.5rem;
+  min-height: 1.8rem;
+}
+
+.result-msg.win { color: #53d769; }
+.result-msg.lose { color: #e74c3c; }

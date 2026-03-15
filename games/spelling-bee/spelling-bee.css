@@ -1,0 +1,179 @@
+/* ===== Spelling Bee styles ===== */
+
+.game-board {
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(0.5rem, 2vw, 0.75rem);
+  padding-bottom: 1.5rem;
+}
+
+/* ===== Rank bar ===== */
+.rank-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 380px;
+}
+
+.rank-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--accent);
+  white-space: nowrap;
+  min-width: 70px;
+}
+
+.rank-track {
+  flex: 1;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.rank-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--accent);
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+.score-num {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  min-width: 28px;
+  text-align: right;
+}
+
+/* ===== Found words ===== */
+.found-words {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  justify-content: center;
+  max-width: 400px;
+  min-height: 1.6rem;
+}
+
+.found-word {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary);
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.found-word.pangram {
+  background: var(--accent);
+  color: #1a1d27;
+}
+
+/* ===== Input display ===== */
+.input-display {
+  font-size: clamp(1.3rem, 4vw, 1.8rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  min-height: 2.2rem;
+  color: #fff;
+  text-align: center;
+}
+
+.input-display .center-letter {
+  color: var(--accent);
+}
+
+/* ===== Toast ===== */
+.sb-toast {
+  position: fixed;
+  top: 4.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fff;
+  color: #1a1d27;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-size: 0.9rem;
+  z-index: 100;
+  opacity: 1;
+  transition: opacity 0.5s;
+  pointer-events: none;
+}
+
+.sb-toast.fade {
+  opacity: 0;
+}
+
+/* ===== Honeycomb ===== */
+.honeycomb {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin: 0.5rem 0;
+}
+
+.hex-row {
+  display: flex;
+  gap: 4px;
+}
+
+.hex-btn {
+  width: clamp(52px, 14vw, 64px);
+  height: clamp(52px, 14vw, 64px);
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  border: none;
+  background: #e0e0d6;
+  color: #1a1d27;
+  font-size: clamp(1.1rem, 3.5vw, 1.4rem);
+  font-weight: 800;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.1s, background 0.15s;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.hex-btn:active {
+  transform: scale(0.92);
+}
+
+.hex-btn.center {
+  background: var(--accent);
+  color: #1a1d27;
+}
+
+/* ===== Action buttons ===== */
+.sb-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.sb-actions .btn {
+  padding: 0.5rem 1.5rem;
+  font-size: 0.95rem;
+}
+
+/* ===== Shake animation ===== */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-4px); }
+  40% { transform: translateX(4px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(3px); }
+}
+
+.input-display.shake {
+  animation: shake 0.35s ease;
+}
