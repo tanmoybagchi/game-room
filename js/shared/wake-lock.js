@@ -17,7 +17,7 @@
   function resetIdle() {
     clearTimeout(idleTimer);
     acquire();
-    idleTimer = setTimeout(release, 60000);
+    idleTimer = setTimeout(release, 120000);
   }
 
   ['pointerdown', 'pointermove', 'keydown', 'touchstart'].forEach(evt =>
