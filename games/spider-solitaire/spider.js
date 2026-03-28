@@ -10,7 +10,7 @@ import {
   saveToStorage, loadFromStorage, clearStorage,
   CARD_BACKS, applyCardBack, randomCardBackIndex,
   cloneGameState, pushToHistory, showWinOverlay, hideWinOverlay,
-  getCardOffset, wireGameControls
+  getCardOffset, wireGameControls, createDoubleTapHandler
 } from '../../js/shared/card-engine.js';
 
 (() => {
@@ -288,6 +288,30 @@ import {
   }
 
   // ---- Click / Tap handling ----
+  const isDoubleTap = createDoubleTapHandler();
+
+  function tryAutoMove(col, cardIndex) {
+    const pile = state.tableau[col];
+    if (!isValidRun(pile, cardIndex)) return false;
+    const card = pile[cardIndex];
+    let bestCol = -1;
+    let bestSameSuit = -1;
+    for (let tc = 0; tc < NUM_COLS; tc++) {
+      if (tc === col) continue;
+      if (!canPlaceOnTableau(card, tc)) continue;
+      if (state.tableau[tc].length === 0) {
+        if (bestCol < 0) bestCol = tc;
+      } else {
+        const top = state.tableau[tc][state.tableau[tc].length - 1];
+        if (top.suit === card.suit && bestSameSuit < 0) bestSameSuit = tc;
+        else if (bestCol < 0) bestCol = tc;
+      }
+    }
+    const target = bestSameSuit >= 0 ? bestSameSuit : bestCol;
+    if (target >= 0) { moveCards(col, cardIndex, target); return true; }
+    return false;
+  }
+
   $board.addEventListener('click', (e) => {
     const cardEl = e.target.closest('.card');
     const pileEl = e.target.closest('.pile');
@@ -310,6 +334,11 @@ import {
     const col = parseInt(cardEl.dataset.col);
     const cardIndex = parseInt(cardEl.dataset.cardIndex);
 
+    if (isDoubleTap(col, cardIndex)) {
+      clearSel();
+      if (tryAutoMove(col, cardIndex)) return;
+    }
+
     if (selectedCard) {
       handleTapTarget(col);
       return;
@@ -322,7 +351,7 @@ import {
     selectCard(col, cardIndex);
   });
 
-  // ---- Double-click: auto-move to best column ----
+  // ---- Double-click: auto-move to best column (desktop) ----
   $board.addEventListener('dblclick', (e) => {
     const cardEl = e.target.closest('.card.face-up');
     if (!cardEl) return;
@@ -330,30 +359,7 @@ import {
 
     const col = parseInt(cardEl.dataset.col);
     const cardIndex = parseInt(cardEl.dataset.cardIndex);
-    const pile = state.tableau[col];
-
-    if (!isValidRun(pile, cardIndex)) return;
-
-    const card = pile[cardIndex];
-
-    // Try to find best target: prefer same-suit match, then any valid match
-    let bestCol = -1;
-    let bestSameSuit = -1;
-
-    for (let tc = 0; tc < NUM_COLS; tc++) {
-      if (tc === col) continue;
-      if (!canPlaceOnTableau(card, tc)) continue;
-      if (state.tableau[tc].length === 0) {
-        if (bestCol < 0) bestCol = tc;
-      } else {
-        const top = state.tableau[tc][state.tableau[tc].length - 1];
-        if (top.suit === card.suit && bestSameSuit < 0) bestSameSuit = tc;
-        else if (bestCol < 0) bestCol = tc;
-      }
-    }
-
-    const target = bestSameSuit >= 0 ? bestSameSuit : bestCol;
-    if (target >= 0) moveCards(col, cardIndex, target);
+    tryAutoMove(col, cardIndex);
   });
 
   // ---- Drag and Drop (desktop) ----

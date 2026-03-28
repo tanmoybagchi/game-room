@@ -10,7 +10,7 @@ import {
   clearSelection as clearSelectionUI,
   saveToStorage, loadFromStorage, clearStorage,
   cloneGameState, pushToHistory, showWinOverlay, hideWinOverlay,
-  wireGameControls
+  wireGameControls, createDoubleTapHandler
 } from '../../js/shared/card-engine.js';
 
 (() => {
@@ -376,6 +376,38 @@ import {
   }
 
   // ---- Click / Tap handling ----
+  const isDoubleTap = createDoubleTapHandler();
+
+  function tryAutoFoundation(source, col, cardIndex) {
+    if (source === 'tableau') {
+      const pile = state.tableau[col];
+      if (cardIndex !== pile.length - 1) return false;
+      const card = pile[pile.length - 1];
+      const fi = findFoundationForCard(card, state.foundations);
+      if (fi >= 0) { moveToFoundation(pile, pile.length - 1, fi); autoMoveToFoundations(); render(); saveState(); return true; }
+      // Fallback: move to an empty tableau column
+      for (let tc = 0; tc < 8; tc++) {
+        if (tc !== col && state.tableau[tc].length === 0) {
+          moveCardsTableau(col, cardIndex, tc);
+          return true;
+        }
+      }
+    } else if (source === 'freecell') {
+      const card = state.freeCells[col];
+      if (!card) return false;
+      const fi = findFoundationForCard(card, state.foundations);
+      if (fi >= 0) { moveFreeCellToFoundation(col, fi); autoMoveToFoundations(); render(); saveState(); return true; }
+      // Fallback: move to an empty tableau column
+      for (let tc = 0; tc < 8; tc++) {
+        if (state.tableau[tc].length === 0) {
+          moveFromFreeCell(col, tc);
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   $board.addEventListener('click', (e) => {
     const cardEl = e.target.closest('.card');
     const pileEl = e.target.closest('.pile');
@@ -393,6 +425,11 @@ import {
     const col = parseInt(cardEl.dataset.col ?? cardEl.dataset.foundation ?? cardEl.dataset.cell ?? 0);
     const cardIndex = parseInt(cardEl.dataset.cardIndex);
 
+    if (isDoubleTap(source, col, cardIndex)) {
+      clearSel();
+      if (tryAutoFoundation(source, col, cardIndex)) return;
+    }
+
     if (selectedCard) {
       if (source === 'tableau') { handleTapTarget('tableau', col); return; }
       if (source === 'foundation') { handleTapTarget('foundation', col); return; }
@@ -406,7 +443,7 @@ import {
     selectCard(source, col, cardIndex);
   });
 
-  // ---- Double-click: auto-move to foundation ----
+  // ---- Double-click: auto-move to foundation (desktop) ----
   $board.addEventListener('dblclick', (e) => {
     const cardEl = e.target.closest('.card.face-up');
     if (!cardEl) return;
@@ -415,29 +452,7 @@ import {
     const source = cardEl.dataset.source;
     const col = parseInt(cardEl.dataset.col ?? cardEl.dataset.cell ?? 0);
     const cardIndex = parseInt(cardEl.dataset.cardIndex);
-
-    if (source === 'tableau') {
-      const pile = state.tableau[col];
-      if (cardIndex !== pile.length - 1) return;
-      const card = pile[pile.length - 1];
-      const fi = findFoundationForCard(card, state.foundations);
-      if (fi >= 0) {
-        moveToFoundation(pile, pile.length - 1, fi);
-        autoMoveToFoundations();
-        render();
-        saveState();
-      }
-    } else if (source === 'freecell') {
-      const card = state.freeCells[col];
-      if (!card) return;
-      const fi = findFoundationForCard(card, state.foundations);
-      if (fi >= 0) {
-        moveFreeCellToFoundation(col, fi);
-        autoMoveToFoundations();
-        render();
-        saveState();
-      }
-    }
+    tryAutoFoundation(source, col, cardIndex);
   });
 
   // ---- Drag and Drop (desktop) ----

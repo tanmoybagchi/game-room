@@ -7,8 +7,8 @@
   --card-w: clamp(38px, 10vw, 65px);
   --card-h: clamp(54px, 14vw, 93px);
   --card-radius: clamp(3px, 0.6vw, 7px);
-  --card-font: clamp(1.1rem, 3vw, 1.8rem);
-  --card-suit-font: clamp(0.9rem, 2.5vw, 1.4rem);
+  --card-font: clamp(1.5rem, 4vw, 2.4rem);
+  --card-suit-font: clamp(1.3rem, 3.5vw, 2rem);
   --tableau-offset: 0;
   --tableau-offset-down: 0;
 }

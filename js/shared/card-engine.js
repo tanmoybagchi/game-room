@@ -162,6 +162,24 @@ export function wireHelpModal(btnHelp, btnClose, modal) {
 }
 
 // ---- Game engine helpers ----
+
+// Double-tap detection (works on mobile where dblclick is unreliable).
+// Returns a function that should be called on each click with identifying
+// properties of the tapped card. Returns true if this click is a double-tap.
+export function createDoubleTapHandler(delay = 400) {
+  let last = { time: 0, id: null };
+  return function isDoubleTap(...idParts) {
+    const id = idParts.join('|');
+    const now = Date.now();
+    if (now - last.time < delay && last.id === id) {
+      last = { time: 0, id: null };
+      return true;
+    }
+    last = { time: now, id };
+    return false;
+  };
+}
+
 export function cloneGameState(state) {
   return JSON.parse(JSON.stringify(state));
 }

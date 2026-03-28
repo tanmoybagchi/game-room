@@ -15,14 +15,14 @@
 <body>
   <header class="site-header">
     <h1>🔢 Sudoku</h1>
+    <select class="btn" id="difficulty">
+      <option value="easy">Easy</option>
+      <option value="medium" selected>Medium</option>
+      <option value="hard">Hard</option>
+      <option value="expert">Expert</option>
+    </select>
     <div class="header-controls">
-      <button class="btn" id="btn-undo" disabled>⟲ <span class="btn-label">Undo</span></button>
-      <select class="btn" id="difficulty">
-        <option value="easy">Easy</option>
-        <option value="medium" selected>Medium</option>
-        <option value="hard">Hard</option>
-        <option value="expert">Expert</option>
-      </select>
+      <button class="btn" id="btn-undo" disabled>↶ <span class="btn-label">Undo</span></button>
       <button class="btn" id="btn-new-game">🔢 <span class="btn-label">New Game</span></button>
       <button class="btn" id="btn-help" aria-label="How to play">ℹ</button>
       <a href="../../" class="btn" aria-label="Home">🏠</a>

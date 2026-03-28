@@ -12,6 +12,7 @@
   font-size: 0.85rem;
   appearance: auto;
   cursor: pointer;
+  margin-left: auto;
 }
 
 /* ===== Grid ===== */
@@ -19,8 +20,8 @@
   display: grid;
   grid-template-columns: repeat(9, 1fr);
   grid-template-rows: repeat(9, 1fr);
-  width: min(85vw, 400px);
-  height: min(85vw, 400px);
+  width: min(95vw, 480px);
+  height: min(95vw, 480px);
   border: 3px solid #1a1d27;
   border-radius: var(--radius-sm);
   overflow: hidden;
@@ -116,7 +117,7 @@
   flex-direction: column;
   align-items: center;
   gap: clamp(0.5rem, 1.5vw, 0.75rem);
-  width: min(85vw, 400px);
+  width: min(95vw, 480px);
 }
 
 .number-pad {
