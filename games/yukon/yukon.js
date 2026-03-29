@@ -1,5 +1,5 @@
-// ============================================================
-// Yukon Solitaire — Engine + UI
+﻿// ============================================================
+// Yukon Solitaire â€” Engine + UI
 // ============================================================
 
 import {
@@ -11,7 +11,8 @@ import {
   saveToStorage, loadFromStorage, clearStorage,
   CARD_BACKS, applyCardBack, randomCardBackIndex,
   cloneGameState, pushToHistory, showWinOverlay, hideWinOverlay,
-  getCardOffset, wireGameControls, createDoubleTapHandler
+  getCardOffset, wireGameControls, createDoubleTapHandler,
+  snapshotCardPositions, animateCardsFromSnapshot, findDropPile
 } from '../../js/shared/card-engine.js';
 
 (() => {
@@ -34,6 +35,7 @@ import {
   let moveCount = 0;
   let cardBackIndex = 0;
   let selectedCard = null;
+  let skipFlip = false;
 
   // ---- Yukon deal ----
   // Col 0: 1 card (face up)
@@ -87,12 +89,14 @@ import {
 
   function undo() {
     if (history.length === 0) return;
+    const oldPositions = snapshotCardPositions($board);
     const prev = history.pop();
     state = prev.state;
     moveCount = prev.moveCount;
     selectedCard = null;
     clearSel();
     render();
+    if (!skipFlip) animateCardsFromSnapshot($board, oldPositions);
     saveState();
   }
 
@@ -110,22 +114,26 @@ import {
   // ---- Moves ----
   function moveCards(fromPile, fromIndex, toPile) {
     pushHistory();
+    const oldPositions = snapshotCardPositions($board);
     const cards = fromPile.splice(fromIndex);
     toPile.push(...cards);
     autoFlipTop(fromPile);
     moveCount++;
     render();
+    if (!skipFlip) animateCardsFromSnapshot($board, oldPositions);
     saveState();
     checkWin();
   }
 
   function moveToFoundation(fromPile, cardIndex, fi) {
     pushHistory();
+    const oldPositions = snapshotCardPositions($board);
     const card = fromPile.splice(cardIndex, 1)[0];
     state.foundations[fi].push(card);
     autoFlipTop(fromPile);
     moveCount++;
     render();
+    if (!skipFlip) animateCardsFromSnapshot($board, oldPositions);
     saveState();
     checkWin();
   }
@@ -343,23 +351,26 @@ import {
 
   $board.addEventListener('dragover', (e) => {
     if (!dragData) return;
-    const pileEl = e.target.closest('.pile');
-    if (pileEl && (pileEl.classList.contains('tableau-col') || pileEl.classList.contains('foundation'))) {
-      e.preventDefault();
-      e.dataTransfer.dropEffect = 'move';
-    }
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
   });
 
   $board.addEventListener('drop', (e) => {
     e.preventDefault();
     if (!dragData) return;
-    const pileEl = e.target.closest('.pile');
-    if (!pileEl) return;
     const dd = dragData;
     dragData = null;
 
+    const ghostW = dragGhost ? dragGhost.offsetWidth : 90;
+    const ghostH = dragGhost ? dragGhost.offsetHeight : 130;
+    const ghostRect = { left: e.clientX - 30, top: e.clientY - 20, right: e.clientX - 30 + ghostW, bottom: e.clientY - 20 + ghostH };
+    const pileEl = findDropPile(ghostRect, $board, p => p.classList.contains('tableau-col') || p.classList.contains('foundation'));
+    if (!pileEl) return;
+
+    skipFlip = true;
     if (pileEl.classList.contains('tableau-col')) executeDragMove(dd, 'tableau', parseInt(pileEl.dataset.col));
     else if (pileEl.classList.contains('foundation')) executeDragMove(dd, 'foundation', parseInt(pileEl.dataset.foundation));
+    skipFlip = false;
     document.querySelectorAll('.pile.drop-target').forEach(el => el.classList.remove('drop-target'));
   });
 
@@ -432,7 +443,8 @@ import {
     const td = touchDrag;
     touchDrag = null;
 
-    if (touchGhost) { touchGhost.remove(); touchGhost = null; }
+    let savedGhostRect = null;
+    if (touchGhost) { savedGhostRect = touchGhost.getBoundingClientRect(); touchGhost.remove(); touchGhost = null; }
     td.el.style.opacity = '';
     if (td.source === 'tableau') {
       const colEl = $tableauCols[td.col];
@@ -440,16 +452,15 @@ import {
     }
     document.querySelectorAll('.pile.drop-target').forEach(el => el.classList.remove('drop-target'));
 
-    if (!td.moved) return;
-    const touch = e.changedTouches[0];
-    const dropEl = document.elementFromPoint(touch.clientX, touch.clientY);
-    if (!dropEl) return;
-    const pileEl = dropEl.closest('.pile');
+    if (!td.moved || !savedGhostRect) return;
+    const pileEl = findDropPile(savedGhostRect, $board, p => p.classList.contains('tableau-col') || p.classList.contains('foundation'));
     if (!pileEl) return;
 
     const dd = { source: td.source, col: td.col, cardIndex: td.cardIndex };
+    skipFlip = true;
     if (pileEl.classList.contains('tableau-col')) executeDragMove(dd, 'tableau', parseInt(pileEl.dataset.col));
     else if (pileEl.classList.contains('foundation')) executeDragMove(dd, 'foundation', parseInt(pileEl.dataset.foundation));
+    skipFlip = false;
   });
 
   // ---- Persistence ----

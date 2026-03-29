@@ -91,6 +91,61 @@ export function buildStackGhost(cards) {
 // ---- Win animations (re-exported from shared module) ----
 export { cascadeAnimation, showWinOverlay, hideWinOverlay } from './win-animation.js';
 
+// ---- FLIP card animation helpers ----
+function defaultCardKey(el) {
+  if (el.dataset.suit && el.dataset.rank) return `${el.dataset.suit}-${el.dataset.rank}`;
+  return null;
+}
+
+export function snapshotCardPositions(board, keyFn = defaultCardKey) {
+  const positions = new Map();
+  board.querySelectorAll('.card').forEach(el => {
+    const key = keyFn(el);
+    if (key) {
+      const rect = el.getBoundingClientRect();
+      positions.set(key, { left: rect.left, top: rect.top });
+    }
+  });
+  return positions;
+}
+
+export function animateCardsFromSnapshot(board, oldPositions, { keyFn = defaultCardKey, keyMapping = null } = {}) {
+  const toAnimate = [];
+  board.querySelectorAll('.card').forEach(el => {
+    const key = keyFn(el);
+    if (!key) return;
+    let oldPos;
+    if (keyMapping) {
+      const mappedKey = keyMapping.get(key);
+      if (mappedKey) oldPos = oldPositions.get(mappedKey);
+    }
+    if (!oldPos) oldPos = oldPositions.get(key);
+    if (!oldPos) return;
+    const newRect = el.getBoundingClientRect();
+    const dx = oldPos.left - newRect.left;
+    const dy = oldPos.top - newRect.top;
+    if (Math.abs(dx) < 1 && Math.abs(dy) < 1) return;
+    const origZ = el.style.zIndex;
+    el.style.transition = 'none';
+    el.style.transform = `translate(${dx}px, ${dy}px)`;
+    el.style.zIndex = '1000';
+    toAnimate.push({ el, origZ });
+  });
+  if (toAnimate.length === 0) return;
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      toAnimate.forEach(({ el, origZ }) => {
+        el.style.transition = 'transform 0.2s ease-out';
+        el.style.transform = '';
+        el.addEventListener('transitionend', () => {
+          el.style.transition = '';
+          el.style.zIndex = origZ;
+        }, { once: true });
+      });
+    });
+  });
+}
+
 // ---- Selection helpers ----
 export function clearSelection() {
   document.querySelectorAll('.card.selected').forEach(el => el.classList.remove('selected'));
@@ -180,6 +235,32 @@ export function createDoubleTapHandler(delay = 400) {
   };
 }
 
+// ---- Stock-to-waste flip animation ----
+export function animateStockToWaste($stock, $waste, prevCard) {
+  const stockRect = $stock.getBoundingClientRect();
+  const wasteCard = $waste.querySelector('.card');
+  if (!wasteCard) return;
+  if (prevCard) {
+    const prevEl = createCardEl(prevCard);
+    prevEl.style.top = '0';
+    prevEl.draggable = false;
+    prevEl.classList.add('prev-waste');
+    $waste.insertBefore(prevEl, wasteCard);
+  }
+  const wasteRect = wasteCard.getBoundingClientRect();
+  const dx = stockRect.left - wasteRect.left;
+  wasteCard.style.setProperty('--flip-dx', dx + 'px');
+  wasteCard.classList.add('card-flip');
+  $waste.classList.add('animating');
+  wasteCard.addEventListener('animationend', () => {
+    wasteCard.classList.remove('card-flip');
+    wasteCard.style.removeProperty('--flip-dx');
+    $waste.classList.remove('animating');
+    const prev = $waste.querySelector('.prev-waste');
+    if (prev) prev.remove();
+  }, { once: true });
+}
+
 export function cloneGameState(state) {
   return JSON.parse(JSON.stringify(state));
 }
@@ -198,6 +279,24 @@ export function getCardOffset(ri, pile) {
     offset += pile[i].faceUp ? upPx : downPx;
   }
   return offset;
+}
+
+// ---- Overlap-based drop target detection ----
+// Given a ghost element rect (or any rect) and a board element, find
+// the .pile that has the largest overlap area with the rect.
+// `pileFilter` is an optional function to restrict which piles are candidates.
+export function findDropPile(ghostRect, $board, pileFilter) {
+  let bestPile = null;
+  let bestArea = 0;
+  for (const pile of $board.querySelectorAll('.pile')) {
+    if (pileFilter && !pileFilter(pile)) continue;
+    const pr = pile.getBoundingClientRect();
+    const overlapX = Math.max(0, Math.min(ghostRect.right, pr.right) - Math.max(ghostRect.left, pr.left));
+    const overlapY = Math.max(0, Math.min(ghostRect.bottom, pr.bottom) - Math.max(ghostRect.top, pr.top));
+    const area = overlapX * overlapY;
+    if (area > bestArea) { bestArea = area; bestPile = pile; }
+  }
+  return bestPile;
 }
 
 export function wireGameControls({ $btnUndo, $btnNewGame, $btnPlayAgain, undo, newGame, clearSave, loadState, render }) {

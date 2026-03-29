@@ -1,5 +1,5 @@
-// ============================================================
-// FreeCell — Engine + UI
+﻿// ============================================================
+// FreeCell â€” Engine + UI
 // ============================================================
 
 import {
@@ -10,7 +10,8 @@ import {
   clearSelection as clearSelectionUI,
   saveToStorage, loadFromStorage, clearStorage,
   cloneGameState, pushToHistory, showWinOverlay, hideWinOverlay,
-  wireGameControls, createDoubleTapHandler
+  wireGameControls, createDoubleTapHandler,
+  snapshotCardPositions, animateCardsFromSnapshot, findDropPile
 } from '../../js/shared/card-engine.js';
 
 (() => {
@@ -33,6 +34,7 @@ import {
   let history = [];
   let moveCount = 0;
   let selectedCard = null;
+  let skipFlip = false;
 
   // ---- State management ----
   function newGame() {
@@ -64,12 +66,14 @@ import {
 
   function undo() {
     if (history.length === 0) return;
+    const oldPositions = snapshotCardPositions($board);
     const prev = history.pop();
     state = prev.state;
     moveCount = prev.moveCount;
     selectedCard = null;
     clearSel();
     render();
+    if (!skipFlip) animateCardsFromSnapshot($board, oldPositions);
     saveState();
   }
 
@@ -113,10 +117,12 @@ import {
     if (!canPlaceOnTableau(topCard, toCol)) return false;
 
     pushHistory();
+    const oldPositions = snapshotCardPositions($board);
     const cards = pile.splice(fromIndex);
     state.tableau[toCol].push(...cards);
     moveCount++;
     render();
+    if (!skipFlip) animateCardsFromSnapshot($board, oldPositions);
     saveState();
     checkWin();
     return true;
@@ -124,10 +130,12 @@ import {
 
   function moveToFoundation(sourcePile, cardIndex, fi) {
     pushHistory();
+    const oldPositions = snapshotCardPositions($board);
     const card = sourcePile.splice(cardIndex, 1)[0];
     state.foundations[fi].push(card);
     moveCount++;
     render();
+    if (!skipFlip) animateCardsFromSnapshot($board, oldPositions);
     saveState();
     checkWin();
   }
@@ -135,10 +143,12 @@ import {
   function moveToFreeCell(sourcePile, cardIndex, cellIndex) {
     if (state.freeCells[cellIndex] !== null) return false;
     pushHistory();
+    const oldPositions = snapshotCardPositions($board);
     const card = sourcePile.splice(cardIndex, 1)[0];
     state.freeCells[cellIndex] = card;
     moveCount++;
     render();
+    if (!skipFlip) animateCardsFromSnapshot($board, oldPositions);
     saveState();
     return true;
   }
@@ -148,10 +158,12 @@ import {
     if (!card) return false;
     if (!canPlaceOnTableau(card, toCol)) return false;
     pushHistory();
+    const oldPositions = snapshotCardPositions($board);
     state.freeCells[cellIndex] = null;
     state.tableau[toCol].push(card);
     moveCount++;
     render();
+    if (!skipFlip) animateCardsFromSnapshot($board, oldPositions);
     saveState();
     checkWin();
     return true;
@@ -162,10 +174,12 @@ import {
     if (!card) return false;
     if (!canPlaceOnFoundation(card, fi, state.foundations)) return false;
     pushHistory();
+    const oldPositions = snapshotCardPositions($board);
     state.freeCells[cellIndex] = null;
     state.foundations[fi].push(card);
     moveCount++;
     render();
+    if (!skipFlip) animateCardsFromSnapshot($board, oldPositions);
     saveState();
     checkWin();
     return true;
@@ -337,10 +351,12 @@ import {
         const card = pile[pile.length - 1];
         if (canPlaceOnTableau(card, targetIndex)) {
           pushHistory();
+          const oldPositions = snapshotCardPositions($board);
           pile.pop();
           state.tableau[targetIndex].push(card);
           moveCount++;
           render();
+          if (!skipFlip) animateCardsFromSnapshot($board, oldPositions);
           saveState();
         }
       }
@@ -365,10 +381,12 @@ import {
       } else if (sel.source === 'freecell') {
         if (state.freeCells[targetIndex] === null) {
           pushHistory();
+          const oldPositions = snapshotCardPositions($board);
           state.freeCells[targetIndex] = state.freeCells[sel.col];
           state.freeCells[sel.col] = null;
           moveCount++;
           render();
+          if (!skipFlip) animateCardsFromSnapshot($board, oldPositions);
           saveState();
         }
       }
@@ -498,24 +516,27 @@ import {
 
   $board.addEventListener('dragover', (e) => {
     if (!dragData) return;
-    const pileEl = e.target.closest('.pile');
-    if (pileEl && (pileEl.classList.contains('tableau-col') || pileEl.classList.contains('foundation') || pileEl.classList.contains('free-cell'))) {
-      e.preventDefault();
-      e.dataTransfer.dropEffect = 'move';
-    }
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
   });
 
   $board.addEventListener('drop', (e) => {
     e.preventDefault();
     if (!dragData) return;
-    const pileEl = e.target.closest('.pile');
-    if (!pileEl) return;
     const dd = dragData;
     dragData = null;
 
+    const ghostW = dragGhost ? dragGhost.offsetWidth : 90;
+    const ghostH = dragGhost ? dragGhost.offsetHeight : 130;
+    const ghostRect = { left: e.clientX - 30, top: e.clientY - 20, right: e.clientX - 30 + ghostW, bottom: e.clientY - 20 + ghostH };
+    const pileEl = findDropPile(ghostRect, $board, p => p.classList.contains('tableau-col') || p.classList.contains('foundation') || p.classList.contains('free-cell'));
+    if (!pileEl) return;
+
+    skipFlip = true;
     if (pileEl.classList.contains('tableau-col')) executeDragMove(dd, 'tableau', parseInt(pileEl.dataset.col));
     else if (pileEl.classList.contains('foundation')) executeDragMove(dd, 'foundation', parseInt(pileEl.dataset.foundation));
     else if (pileEl.classList.contains('free-cell')) executeDragMove(dd, 'freecell', parseInt(pileEl.dataset.cell));
+    skipFlip = false;
 
     document.querySelectorAll('.pile.drop-target').forEach(el => el.classList.remove('drop-target'));
   });
@@ -550,10 +571,12 @@ import {
       } else if (dd.source === 'freecell') {
         if (state.freeCells[targetIndex] === null && dd.col !== targetIndex) {
           pushHistory();
+          const oldPositions = snapshotCardPositions($board);
           state.freeCells[targetIndex] = state.freeCells[dd.col];
           state.freeCells[dd.col] = null;
           moveCount++;
           render();
+          if (!skipFlip) animateCardsFromSnapshot($board, oldPositions);
           saveState();
         }
       }
@@ -609,7 +632,8 @@ import {
     const td = touchDrag;
     touchDrag = null;
 
-    if (touchGhost) { touchGhost.remove(); touchGhost = null; }
+    let savedGhostRect = null;
+    if (touchGhost) { savedGhostRect = touchGhost.getBoundingClientRect(); touchGhost.remove(); touchGhost = null; }
     td.el.style.opacity = '';
     if (td.source === 'tableau') {
       const colEl = $tableauCols[td.col];
@@ -617,17 +641,16 @@ import {
     }
     document.querySelectorAll('.pile.drop-target').forEach(el => el.classList.remove('drop-target'));
 
-    if (!td.moved) return;
-    const touch = e.changedTouches[0];
-    const dropEl = document.elementFromPoint(touch.clientX, touch.clientY);
-    if (!dropEl) return;
-    const pileEl = dropEl.closest('.pile');
+    if (!td.moved || !savedGhostRect) return;
+    const pileEl = findDropPile(savedGhostRect, $board, p => p.classList.contains('tableau-col') || p.classList.contains('foundation') || p.classList.contains('free-cell'));
     if (!pileEl) return;
 
     const dd = { source: td.source, col: td.col, cardIndex: td.cardIndex };
+    skipFlip = true;
     if (pileEl.classList.contains('tableau-col')) executeDragMove(dd, 'tableau', parseInt(pileEl.dataset.col));
     else if (pileEl.classList.contains('foundation')) executeDragMove(dd, 'foundation', parseInt(pileEl.dataset.foundation));
     else if (pileEl.classList.contains('free-cell')) executeDragMove(dd, 'freecell', parseInt(pileEl.dataset.cell));
+    skipFlip = false;
   });
 
   // ---- Persistence ----

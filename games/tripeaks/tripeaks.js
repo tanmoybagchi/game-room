@@ -9,7 +9,8 @@ import {
   clearSelection as clearSelectionUI,
   saveToStorage, loadFromStorage, clearStorage,
   cloneGameState, pushToHistory, showWinOverlay, hideWinOverlay,
-  wireGameControls
+  wireGameControls,
+  animateStockToWaste
 } from '../../js/shared/card-engine.js';
 
 (() => {
@@ -154,13 +155,25 @@ import {
   }
 
   function drawStock() {
-    if (state.stock.length === 0) return;
+    if (state.stock.length === 0 && state.waste.length <= 1) return;
     pushHist();
+    if (state.stock.length === 0) {
+      // Recycle waste back to stock
+      state.stock = state.waste.reverse();
+      state.stock.forEach(c => c.faceUp = false);
+      state.waste = [];
+      moveCount++;
+      render();
+      saveState();
+      return;
+    }
     const card = state.stock.pop();
     card.faceUp = true;
     state.waste.push(card);
     moveCount++;
     render();
+    const prevCard = state.waste.length >= 2 ? state.waste[state.waste.length - 2] : null;
+    animateStockToWaste($stock, $waste, prevCard);
     saveState();
   }
 

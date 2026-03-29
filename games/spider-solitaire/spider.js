@@ -1,5 +1,5 @@
-// ============================================================
-// Spider Solitaire — Engine + UI (1-suit)
+﻿// ============================================================
+// Spider Solitaire â€” Engine + UI (1-suit)
 // ============================================================
 
 import {
@@ -10,7 +10,8 @@ import {
   saveToStorage, loadFromStorage, clearStorage,
   CARD_BACKS, applyCardBack, randomCardBackIndex,
   cloneGameState, pushToHistory, showWinOverlay, hideWinOverlay,
-  getCardOffset, wireGameControls, createDoubleTapHandler
+  getCardOffset, wireGameControls, createDoubleTapHandler,
+  snapshotCardPositions, animateCardsFromSnapshot, findDropPile
 } from '../../js/shared/card-engine.js';
 
 (() => {
@@ -37,6 +38,7 @@ import {
   let history = [];
   let moveCount = 0;
   let selectedCard = null;
+  let skipFlip = false;
 
   // ---- Create 1-suit deck (104 cards = 8 decks of spades) ----
   function createSpiderDeck() {
@@ -91,12 +93,14 @@ import {
 
   function undo() {
     if (history.length === 0) return;
+    const oldPositions = snapshotCardPositions($board, spiderKeyFn);
     const prev = history.pop();
     state = prev.state;
     moveCount = prev.moveCount;
     selectedCard = null;
     clearSel();
     render();
+    if (!skipFlip) animateCardsFromSnapshot($board, oldPositions, { keyFn: spiderKeyFn });
     saveState();
   }
 
@@ -122,7 +126,7 @@ import {
     return RANK_VALUES[card.rank] === RANK_VALUES[top.rank] - 1;
   }
 
-  // ---- Check for complete K→A run at bottom of a column ----
+  // ---- Check for complete Kâ†’A run at bottom of a column ----
   function checkAndRemoveRun(col) {
     const pile = state.tableau[col];
     if (pile.length < 13) return false;
@@ -148,12 +152,19 @@ import {
       if (state.tableau[col].length === 0) return;
     }
 
+    const oldPositions = snapshotCardPositions($board, spiderKeyFn);
+    const stockRect = $stock.getBoundingClientRect();
     pushHistory();
+    const colMapping = new Map();
     for (let col = 0; col < NUM_COLS; col++) {
       if (state.stock.length === 0) break;
       const card = state.stock.pop();
       card.faceUp = true;
       state.tableau[col].push(card);
+      const newIdx = state.tableau[col].length - 1;
+      // Map dealt card to stock position
+      oldPositions.set(`stock-${col}`, { left: stockRect.left, top: stockRect.top });
+      colMapping.set(`${col}-${newIdx}`, `stock-${col}`);
     }
     moveCount++;
 
@@ -163,20 +174,31 @@ import {
     }
 
     render();
+    if (!skipFlip) animateCardsFromSnapshot($board, oldPositions, { keyFn: spiderKeyFn, keyMapping: colMapping });
     saveState();
     checkWin();
   }
 
   function moveCards(fromCol, fromIndex, toCol) {
+    const oldPositions = snapshotCardPositions($board, spiderKeyFn);
     pushHistory();
+    const movedCount = state.tableau[fromCol].length - fromIndex;
     const cards = state.tableau[fromCol].splice(fromIndex);
+    const toStart = state.tableau[toCol].length;
     state.tableau[toCol].push(...cards);
     autoFlipTop(state.tableau[fromCol]);
     moveCount++;
 
     checkAndRemoveRun(toCol);
 
+    // Build mapping: new positions â†’ old positions for moved cards
+    const colMapping = new Map();
+    for (let i = 0; i < movedCount; i++) {
+      colMapping.set(`${toCol}-${toStart + i}`, `${fromCol}-${fromIndex + i}`);
+    }
+
     render();
+    if (!skipFlip) animateCardsFromSnapshot($board, oldPositions, { keyFn: spiderKeyFn, keyMapping: colMapping });
     saveState();
     checkWin();
   }
@@ -186,6 +208,9 @@ import {
       pile[pile.length - 1].faceUp = true;
     }
   }
+
+  // Spider uses duplicate cards, so key by DOM position
+  const spiderKeyFn = el => el.dataset.source === 'tableau' ? `${el.dataset.col}-${el.dataset.cardIndex}` : null;
 
   // ---- Win detection ----
   function checkWin() {
@@ -230,7 +255,7 @@ import {
     for (let i = 0; i < state.completed; i++) {
       const marker = document.createElement('div');
       marker.className = 'completed-marker';
-      marker.textContent = '♠';
+      marker.textContent = 'â™ ';
       $completedArea.appendChild(marker);
     }
   }
@@ -400,24 +425,27 @@ import {
 
   $board.addEventListener('dragover', (e) => {
     if (!dragData) return;
-    const pileEl = e.target.closest('.pile');
-    if (pileEl && pileEl.classList.contains('tableau-col')) {
-      e.preventDefault();
-      e.dataTransfer.dropEffect = 'move';
-    }
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
   });
 
   $board.addEventListener('drop', (e) => {
     e.preventDefault();
     if (!dragData) return;
-    const pileEl = e.target.closest('.pile');
-    if (!pileEl || !pileEl.classList.contains('tableau-col')) return;
     const dd = dragData;
     dragData = null;
 
+    const ghostW = dragGhost ? dragGhost.offsetWidth : 90;
+    const ghostH = dragGhost ? dragGhost.offsetHeight : 130;
+    const ghostRect = { left: e.clientX - 30, top: e.clientY - 20, right: e.clientX - 30 + ghostW, bottom: e.clientY - 20 + ghostH };
+    const pileEl = findDropPile(ghostRect, $board, p => p.classList.contains('tableau-col'));
+    if (!pileEl) return;
+
     const targetCol = parseInt(pileEl.dataset.col);
     const card = state.tableau[dd.col][dd.cardIndex];
+    skipFlip = true;
     if (canPlaceOnTableau(card, targetCol)) moveCards(dd.col, dd.cardIndex, targetCol);
+    skipFlip = false;
 
     document.querySelectorAll('.pile.drop-target').forEach(el => el.classList.remove('drop-target'));
   });
@@ -467,22 +495,22 @@ import {
     const td = touchDrag;
     touchDrag = null;
 
-    if (touchGhost) { touchGhost.remove(); touchGhost = null; }
+    let savedGhostRect = null;
+    if (touchGhost) { savedGhostRect = touchGhost.getBoundingClientRect(); touchGhost.remove(); touchGhost = null; }
     td.el.style.opacity = '';
     const colEl = $tableauCols[td.col];
     if (colEl) colEl.querySelectorAll('.card').forEach(c => c.style.opacity = '');
     document.querySelectorAll('.pile.drop-target').forEach(el => el.classList.remove('drop-target'));
 
-    if (!td.moved) return;
-    const touch = e.changedTouches[0];
-    const dropEl = document.elementFromPoint(touch.clientX, touch.clientY);
-    if (!dropEl) return;
-    const pileEl = dropEl.closest('.pile');
-    if (!pileEl || !pileEl.classList.contains('tableau-col')) return;
+    if (!td.moved || !savedGhostRect) return;
+    const pileEl = findDropPile(savedGhostRect, $board, p => p.classList.contains('tableau-col'));
+    if (!pileEl) return;
 
     const targetCol = parseInt(pileEl.dataset.col);
     const card = state.tableau[td.col][td.cardIndex];
+    skipFlip = true;
     if (canPlaceOnTableau(card, targetCol)) moveCards(td.col, td.cardIndex, targetCol);
+    skipFlip = false;
   });
 
   // ---- Persistence ----
