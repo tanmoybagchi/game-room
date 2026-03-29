@@ -1,7 +1,7 @@
 {
   "name": "Game Room",
   "short_name": "GameRoom",
-  "start_url": "/",
+  "start_url": "/game-room",
   "display": "standalone",
   "background_color": "#1a3a2a",
   "theme_color": "#246137",

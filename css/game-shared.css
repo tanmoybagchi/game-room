@@ -371,7 +371,7 @@ html, body {
 }
 
 .waste-pile .card.card-flip {
-  animation: stockToWaste 0.35s ease-out;
+  animation: stockToWaste 0.18s ease-out;
 }
 
 /* Card-back overlay — visible first half, hidden at midpoint */

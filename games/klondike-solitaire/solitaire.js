@@ -396,19 +396,50 @@ import {
     const col = parseInt(cardEl.dataset.col ?? cardEl.dataset.foundation ?? 0);
     const cardIndex = parseInt(cardEl.dataset.cardIndex);
 
-    if (isDoubleTap(source, col, cardIndex)) {
-      clearSel();
-      if (tryAutoFoundation(source, col, cardIndex)) return;
+    // If a card is clicked and no card is selected, try to auto-move it
+    if (!selectedCard) {
+      // Try foundation first
+      if (tryAutoFoundation(source, col, cardIndex)) {
+        clearSel();
+        return;
+      }
+      // Try tableau columns (for valid moves)
+      let card, pile;
+      if (source === 'waste') {
+        pile = state.waste;
+        card = pile[pile.length - 1];
+      } else if (source === 'tableau') {
+        pile = state.tableau[col];
+        card = pile[cardIndex];
+      } else if (source === 'foundation') {
+        pile = state.foundations[col];
+        card = pile[pile.length - 1];
+      }
+      // Only allow single card moves from waste/foundation, or top card from tableau
+      if (card) {
+        for (let tc = 0; tc < 7; tc++) {
+          if (source === 'tableau' && tc === col) continue;
+          if (canPlaceOnTableau(card, tc)) {
+            if (source === 'waste') moveCards(state.waste, state.waste.length - 1, state.tableau[tc]);
+            else if (source === 'tableau') moveCards(state.tableau[col], cardIndex, state.tableau[tc]);
+            else if (source === 'foundation') moveCards(state.foundations[col], state.foundations[col].length - 1, state.tableau[tc]);
+            clearSel();
+            return;
+          }
+        }
+      }
+      // If no move possible, select the card as before
+      selectCard(source, col, cardIndex);
+      return;
     }
 
+    // If a card is already selected, handle as before
     if (selectedCard) {
       if (source === 'tableau') { handleTapTarget('tableau', col); return; }
       if (source === 'foundation') { handleTapTarget('foundation', col); return; }
       clearSel();
       return;
     }
-
-    selectCard(source, col, cardIndex);
   });
 
   // ---- Double-click: auto-move to foundation (desktop) ----
