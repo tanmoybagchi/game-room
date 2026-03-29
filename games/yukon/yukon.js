@@ -12,7 +12,7 @@ import {
   CARD_BACKS, applyCardBack, randomCardBackIndex,
   cloneGameState, pushToHistory, showWinOverlay, hideWinOverlay,
   getCardOffset, wireGameControls, createDoubleTapHandler,
-  snapshotCardPositions, animateCardsFromSnapshot, findDropPile
+  snapshotCardPositions, animateCardsFromSnapshot
 } from '../../js/shared/card-engine.js';
 
 (() => {
@@ -351,21 +351,20 @@ import {
 
   $board.addEventListener('dragover', (e) => {
     if (!dragData) return;
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
+    const pileEl = e.target.closest('.pile');
+    if (pileEl && (pileEl.classList.contains('tableau-col') || pileEl.classList.contains('foundation'))) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+    }
   });
 
   $board.addEventListener('drop', (e) => {
     e.preventDefault();
     if (!dragData) return;
+    const pileEl = e.target.closest('.pile');
+    if (!pileEl) return;
     const dd = dragData;
     dragData = null;
-
-    const ghostW = dragGhost ? dragGhost.offsetWidth : 90;
-    const ghostH = dragGhost ? dragGhost.offsetHeight : 130;
-    const ghostRect = { left: e.clientX - 30, top: e.clientY - 20, right: e.clientX - 30 + ghostW, bottom: e.clientY - 20 + ghostH };
-    const pileEl = findDropPile(ghostRect, $board, p => p.classList.contains('tableau-col') || p.classList.contains('foundation'));
-    if (!pileEl) return;
 
     skipFlip = true;
     if (pileEl.classList.contains('tableau-col')) executeDragMove(dd, 'tableau', parseInt(pileEl.dataset.col));
@@ -443,8 +442,7 @@ import {
     const td = touchDrag;
     touchDrag = null;
 
-    let savedGhostRect = null;
-    if (touchGhost) { savedGhostRect = touchGhost.getBoundingClientRect(); touchGhost.remove(); touchGhost = null; }
+    if (touchGhost) { touchGhost.remove(); touchGhost = null; }
     td.el.style.opacity = '';
     if (td.source === 'tableau') {
       const colEl = $tableauCols[td.col];
@@ -452,8 +450,11 @@ import {
     }
     document.querySelectorAll('.pile.drop-target').forEach(el => el.classList.remove('drop-target'));
 
-    if (!td.moved || !savedGhostRect) return;
-    const pileEl = findDropPile(savedGhostRect, $board, p => p.classList.contains('tableau-col') || p.classList.contains('foundation'));
+    if (!td.moved) return;
+    const touch = e.changedTouches[0];
+    const dropEl = document.elementFromPoint(touch.clientX, touch.clientY);
+    if (!dropEl) return;
+    const pileEl = dropEl.closest('.pile');
     if (!pileEl) return;
 
     const dd = { source: td.source, col: td.col, cardIndex: td.cardIndex };

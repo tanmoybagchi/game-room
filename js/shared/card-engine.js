@@ -281,24 +281,6 @@ export function getCardOffset(ri, pile) {
   return offset;
 }
 
-// ---- Overlap-based drop target detection ----
-// Given a ghost element rect (or any rect) and a board element, find
-// the .pile that has the largest overlap area with the rect.
-// `pileFilter` is an optional function to restrict which piles are candidates.
-export function findDropPile(ghostRect, $board, pileFilter) {
-  let bestPile = null;
-  let bestArea = 0;
-  for (const pile of $board.querySelectorAll('.pile')) {
-    if (pileFilter && !pileFilter(pile)) continue;
-    const pr = pile.getBoundingClientRect();
-    const overlapX = Math.max(0, Math.min(ghostRect.right, pr.right) - Math.max(ghostRect.left, pr.left));
-    const overlapY = Math.max(0, Math.min(ghostRect.bottom, pr.bottom) - Math.max(ghostRect.top, pr.top));
-    const area = overlapX * overlapY;
-    if (area > bestArea) { bestArea = area; bestPile = pile; }
-  }
-  return bestPile;
-}
-
 export function wireGameControls({ $btnUndo, $btnNewGame, $btnPlayAgain, undo, newGame, clearSave, loadState, render }) {
   $btnUndo.addEventListener('click', undo);
   $btnNewGame.addEventListener('click', () => { clearSave(); newGame(); });
