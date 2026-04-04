@@ -365,37 +365,18 @@ html, body {
   background-size: var(--card-back-pattern-size, auto);
 }
 
-/* ===== Stock-to-waste card flip ===== */
+/* ===== Stock-to-waste card slide ===== */
 .waste-pile.animating {
   z-index: 100;
 }
 
 .waste-pile .card.card-flip {
-  animation: stockToWaste 0.18s ease-out;
+  animation: slideToWaste 0.35s ease-out forwards;
 }
 
-/* Card-back overlay — visible first half, hidden at midpoint */
-.waste-pile .card.card-flip::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: var(--card-back-bg, #c0392b);
-  border: 1px solid var(--card-back-border, #922b21);
-  box-shadow: inset 0 0 0 4px var(--card-back-accent, rgba(255,255,255,0.35));
-  z-index: 10;
-  animation: hideCardBack 0.35s ease-out;
-}
-
-@keyframes stockToWaste {
-  0%   { transform: translateX(var(--flip-dx)) scaleX(1); }
-  50%  { transform: translateX(calc(var(--flip-dx) * 0.5)) scaleX(0); }
-  100% { transform: translateX(0) scaleX(1); }
-}
-
-@keyframes hideCardBack {
-  0%, 49.9% { opacity: 1; }
-  50%, 100% { opacity: 0; }
+@keyframes slideToWaste {
+  0%   { transform: translateX(var(--flip-dx)); }
+  100% { transform: translateX(0); }
 }
 
 /* ===== Desktop enhancements ===== */

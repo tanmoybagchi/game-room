@@ -235,7 +235,7 @@ export function createDoubleTapHandler(delay = 400) {
   };
 }
 
-// ---- Stock-to-waste flip animation ----
+// ---- Stock-to-waste slide animation ----
 export function animateStockToWaste($stock, $waste, prevCard) {
   const stockRect = $stock.getBoundingClientRect();
   const wasteCard = $waste.querySelector('.card');

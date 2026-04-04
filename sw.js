@@ -1,4 +1,5 @@
-const CACHE_NAME = 'gameroom-v2';
+const CACHE_NAME = 'gameroom-v3';
+const BASE = '/game-room';
 const ASSETS = [
   '/index.html',
   '/manifest.json',
@@ -43,7 +44,7 @@ const ASSETS = [
   '/games/spelling-bee/index.html',
   '/games/spelling-bee/spelling-bee.css',
   '/games/spelling-bee/spelling-bee.js'
-];
+].map(path => BASE + path);
 
 self.addEventListener('install', event => {
   event.waitUntil(
