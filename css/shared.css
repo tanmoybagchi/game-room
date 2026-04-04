@@ -76,6 +76,14 @@ a:hover {
   color: var(--accent);
 }
 
+.site-footer {
+  text-align: center;
+  padding: 2rem 1rem 1rem;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  opacity: 0.5;
+}
+
 /* ===== Utility ===== */
 .btn {
   display: inline-flex;
