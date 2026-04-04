@@ -263,6 +263,50 @@ html, body {
   font-weight: bold;
 }
 
+/* ===== Game Over Overlay ===== */
+.game-over-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.65);
+  z-index: 1000;
+}
+
+.game-over-overlay[hidden] {
+  display: none;
+}
+
+.game-over-content {
+  background: #c0392b;
+  color: #fff;
+  text-align: center;
+  padding: 2rem 3rem;
+  border-radius: var(--radius);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.game-over-content h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.8rem;
+}
+
+.game-over-content p {
+  margin: 0 0 1rem;
+}
+
+.game-over-btn {
+  font-size: 1.1rem;
+  padding: 0.6rem 2rem;
+  background: #fff;
+  color: #c0392b;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-weight: 700;
+}
+
 /* ===== Help Modal ===== */
 .help-modal {
   border: 1px solid var(--border);

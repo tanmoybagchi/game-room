@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gameroom-v7';
+const CACHE_NAME = 'gameroom-v8';
 const BASE = '/game-room';
 const ASSETS = [
   '/index.html',
@@ -44,7 +44,16 @@ const ASSETS = [
   '/games/word-search/word-search.js',
   '/games/spelling-bee/index.html',
   '/games/spelling-bee/spelling-bee.css',
-  '/games/spelling-bee/spelling-bee.js'
+  '/games/spelling-bee/spelling-bee.js',
+  '/games/minesweeper/index.html',
+  '/games/minesweeper/minesweeper.css',
+  '/games/minesweeper/minesweeper.js',
+  '/games/2048/index.html',
+  '/games/2048/2048.css',
+  '/games/2048/2048.js',
+  '/games/memory/index.html',
+  '/games/memory/memory.css',
+  '/games/memory/memory.js'
 ].map(path => BASE + path);
 
 self.addEventListener('install', event => {

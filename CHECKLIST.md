@@ -12,6 +12,7 @@ Every new game added to GameRoom should include:
 8. **ES module** — `<script type="module">`, import shared utilities as needed
 9. **Dashboard entry** — add `<game-card>` to main `index.html`
 10. **Service worker** — add game files to the `ASSETS` list in `sw.js` and bump `CACHE_NAME` version
+11. **No score tracking** — games should not display or track scores
 
 ## File structure per game
 ```

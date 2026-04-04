@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>2048 — Game Room</title>
+  <link rel="icon" href="../../favicon.svg">
+  <link rel="manifest" href="../../manifest.json">
+  <script data-sw="../../sw.js" src="../../js/shared/sw-update.js"></script>
+  <link rel="stylesheet" href="../../css/shared.css">
+  <link rel="stylesheet" href="../../css/game-shared.css">
+  <link rel="stylesheet" href="2048.css">
+  <script src="../../js/shared/wake-lock.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <h1>⬆️ 2048</h1>
+    <div class="header-controls">
+      <button class="btn" id="btn-new-game">🔄 <span class="btn-label">New Game</span></button>
+      <button class="btn" id="btn-help" aria-label="How to play">ℹ</button>
+      <a href="../../" class="btn" aria-label="Home">🏠</a>
+    </div>
+  </header>
+
+  <dialog id="help-modal" class="help-modal">
+    <div class="help-modal-content">
+      <div class="help-modal-header">
+        <h2>How to Play</h2>
+        <button class="btn help-close" id="btn-help-close" aria-label="Close">&times;</button>
+      </div>
+      <p><strong>Goal:</strong> Slide tiles to combine matching numbers and reach 2048!</p>
+      <dl>
+        <dt>Controls</dt>
+        <dd>Swipe or use arrow keys to slide all tiles in one direction.</dd>
+        <dt>Merging</dt>
+        <dd>When two tiles with the same number collide, they merge into one with double the value.</dd>
+        <dt>Scoring</dt>
+        <dd>Each merge adds the new tile's value to your score.</dd>
+        <dt>Game Over</dt>
+        <dd>The game ends when no more moves are possible.</dd>
+      </dl>
+    </div>
+  </dialog>
+
+  <main class="container game-area">
+    <div id="board" class="board">
+      <div class="grid-bg"></div>
+      <div id="tiles" class="tiles"></div>
+    </div>
+  </main>
+
+  <div id="game-over-overlay" class="game-over-overlay" hidden>
+    <div class="game-over-content">
+      <h2>Game Over</h2>
+      <button class="btn game-over-btn" id="btn-retry">Try Again</button>
+    </div>
+  </div>
+
+  <div id="win-toast" class="toast" hidden>🎉 You reached 2048!</div>
+
+  <script type="module" src="2048.js"></script>
+</body>
+</html>

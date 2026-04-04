@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Minesweeper — Game Room</title>
+  <link rel="icon" href="../../favicon.svg">
+  <link rel="manifest" href="../../manifest.json">
+  <script data-sw="../../sw.js" src="../../js/shared/sw-update.js"></script>
+  <link rel="stylesheet" href="../../css/shared.css">
+  <link rel="stylesheet" href="../../css/game-shared.css">
+  <link rel="stylesheet" href="minesweeper.css">
+  <script src="../../js/shared/wake-lock.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <h1>💣 Minesweeper</h1>
+    <div class="header-controls">
+      <button class="btn" id="btn-flag-mode">🚩 <span class="btn-label">Flag</span></button>
+      <button class="btn" id="btn-new-game">💣 <span class="btn-label">New Game</span></button>
+      <button class="btn" id="btn-help" aria-label="How to play">ℹ</button>
+      <a href="../../" class="btn" aria-label="Home">🏠</a>
+    </div>
+  </header>
+
+  <dialog id="help-modal" class="help-modal">
+    <div class="help-modal-content">
+      <div class="help-modal-header">
+        <h2>How to Play</h2>
+        <button class="btn help-close" id="btn-help-close" aria-label="Close">&times;</button>
+      </div>
+      <p><strong>Goal:</strong> Reveal all cells without hitting a mine.</p>
+      <dl>
+        <dt>Reveal</dt>
+        <dd>Tap a cell to reveal it. Numbers show how many mines are adjacent.</dd>
+        <dt>Flag</dt>
+        <dd>Toggle 🚩 mode then tap to mark suspected mines. Or long-press a cell.</dd>
+        <dt>Cascade</dt>
+        <dd>Revealing a 0 automatically reveals all adjacent safe cells.</dd>
+      </dl>
+    </div>
+  </dialog>
+
+  <main class="container game-area">
+    <div class="status-bar">
+      <span id="mine-count">💣 0</span>
+    </div>
+    <div id="board" class="board"></div>
+  </main>
+
+  <div id="game-over-overlay" class="game-over-overlay" hidden>
+    <div class="game-over-content">
+      <h2>💥 Game Over</h2>
+      <button class="btn game-over-btn" id="btn-try-again">Try Again</button>
+    </div>
+  </div>
+
+  <div id="win-overlay" class="win-overlay" hidden>
+    <div class="win-content">
+      <h2>🎉 You Win!</h2>
+      <button class="btn win-btn" id="btn-play-again">Play Again</button>
+    </div>
+  </div>
+
+  <script type="module" src="minesweeper.js"></script>
+</body>
+</html>
