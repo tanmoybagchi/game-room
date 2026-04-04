@@ -24,7 +24,7 @@ class GameCard extends HTMLElement {
 
     const style = document.createElement('style');
     style.textContent = `
-      :host { display: block; }
+      :host { display: block; height: 100%; }
 
       a {
         display: flex;
@@ -39,6 +39,8 @@ class GameCard extends HTMLElement {
         color: inherit;
         transition: transform 0.18s ease, background 0.18s, border-color 0.18s, box-shadow 0.18s;
         cursor: pointer;
+        height: 100%;
+        box-sizing: border-box;
       }
 
       a:hover, a:focus-visible {
