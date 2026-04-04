@@ -152,8 +152,6 @@ html, body {
 
 /* ===== Interaction states ===== */
 .card.selected {
-  box-shadow: 0 0 0 3px var(--accent), 0 4px 12px var(--shadow);
-  transform: translateY(-3px);
   z-index: 100;
 }
 
