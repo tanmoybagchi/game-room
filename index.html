@@ -122,6 +122,15 @@
     </div>
   </main>
 
-  <footer class="site-footer">v1.7.0</footer>
+  <footer class="site-footer"><span id="version" style="cursor:pointer">v1.8.0</span></footer>
+  <script>
+    document.getElementById('version').addEventListener('click', async () => {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map(r => r.unregister()));
+      const keys = await caches.keys();
+      await Promise.all(keys.map(k => caches.delete(k)));
+      location.reload(true);
+    });
+  </script>
 </body>
 </html>
