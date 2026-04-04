@@ -12,8 +12,7 @@ import {
   CARD_BACKS, applyCardBack, randomCardBackIndex,
   cloneGameState, pushToHistory, showWinOverlay, hideWinOverlay,
   getCardOffset, wireGameControls, createDoubleTapHandler,
-  snapshotCardPositions, animateCardsFromSnapshot,
-  animateStockToWaste
+  snapshotCardPositions, animateCardsFromSnapshot
 } from '../../js/shared/card-engine.js';
 
 (() => {
@@ -121,8 +120,7 @@ import {
     moveCount++;
     render();
     if (drew) {
-      const prevCard = state.waste.length >= 2 ? state.waste[state.waste.length - 2] : null;
-      animateStockToWaste($stock, $waste, prevCard);
+      // no-op: card appears instantly
     } else {
       if (!skipFlip) animateCardsFromSnapshot($board, oldPositions);
     }

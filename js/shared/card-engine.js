@@ -235,32 +235,6 @@ export function createDoubleTapHandler(delay = 400) {
   };
 }
 
-// ---- Stock-to-waste slide animation ----
-export function animateStockToWaste($stock, $waste, prevCard) {
-  const stockRect = $stock.getBoundingClientRect();
-  const wasteCard = $waste.querySelector('.card');
-  if (!wasteCard) return;
-  if (prevCard) {
-    const prevEl = createCardEl(prevCard);
-    prevEl.style.top = '0';
-    prevEl.draggable = false;
-    prevEl.classList.add('prev-waste');
-    $waste.insertBefore(prevEl, wasteCard);
-  }
-  const wasteRect = wasteCard.getBoundingClientRect();
-  const dx = stockRect.left - wasteRect.left;
-  wasteCard.style.setProperty('--flip-dx', dx + 'px');
-  wasteCard.classList.add('card-flip');
-  $waste.classList.add('animating');
-  wasteCard.addEventListener('animationend', () => {
-    wasteCard.classList.remove('card-flip');
-    wasteCard.style.removeProperty('--flip-dx');
-    $waste.classList.remove('animating');
-    const prev = $waste.querySelector('.prev-waste');
-    if (prev) prev.remove();
-  }, { once: true });
-}
-
 export function cloneGameState(state) {
   return JSON.parse(JSON.stringify(state));
 }

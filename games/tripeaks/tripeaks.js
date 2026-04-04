@@ -9,8 +9,7 @@ import {
   clearSelection as clearSelectionUI,
   saveToStorage, loadFromStorage, clearStorage,
   cloneGameState, pushToHistory, showWinOverlay, hideWinOverlay,
-  wireGameControls,
-  animateStockToWaste
+  wireGameControls
 } from '../../js/shared/card-engine.js';
 
 (() => {
@@ -172,8 +171,6 @@ import {
     state.waste.push(card);
     moveCount++;
     render();
-    const prevCard = state.waste.length >= 2 ? state.waste[state.waste.length - 2] : null;
-    animateStockToWaste($stock, $waste, prevCard);
     saveState();
   }
 

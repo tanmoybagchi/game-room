@@ -365,20 +365,6 @@ html, body {
   background-size: var(--card-back-pattern-size, auto);
 }
 
-/* ===== Stock-to-waste card slide ===== */
-.waste-pile.animating {
-  z-index: 100;
-}
-
-.waste-pile .card.card-flip {
-  animation: slideToWaste 0.35s ease-out forwards;
-}
-
-@keyframes slideToWaste {
-  0%   { transform: translateX(var(--flip-dx)); }
-  100% { transform: translateX(0); }
-}
-
 /* ===== Desktop enhancements ===== */
 @media (min-width: 501px) {
   .site-header {
