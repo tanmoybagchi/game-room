@@ -11,7 +11,8 @@ import {
   CARD_BACKS, applyCardBack, randomCardBackIndex,
   cloneGameState, pushToHistory, showWinOverlay, hideWinOverlay,
   getCardOffset, wireGameControls, createDoubleTapHandler,
-  snapshotCardPositions, animateCardsFromSnapshot
+  snapshotCardPositions, animateCardsFromSnapshot,
+  throttleAction
 } from '../../js/shared/card-engine.js';
 
 (() => {
@@ -145,7 +146,7 @@ import {
   }
 
   // ---- Moves ----
-  function dealFromStock() {
+  const dealFromStock = throttleAction(function dealFromStock() {
     if (state.stock.length === 0) return;
     // All columns must have at least one card
     for (let col = 0; col < NUM_COLS; col++) {
@@ -177,7 +178,7 @@ import {
     if (!skipFlip) animateCardsFromSnapshot($board, oldPositions, { keyFn: spiderKeyFn, keyMapping: colMapping });
     saveState();
     checkWin();
-  }
+  });
 
   function moveCards(fromCol, fromIndex, toCol) {
     const oldPositions = snapshotCardPositions($board, spiderKeyFn);

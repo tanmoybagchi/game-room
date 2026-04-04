@@ -235,6 +235,17 @@ export function createDoubleTapHandler(delay = 400) {
   };
 }
 
+// ---- Throttle helper (absorbs double-taps) ----
+export function throttleAction(fn, ms = 300) {
+  let last = 0;
+  return function (...args) {
+    const now = Date.now();
+    if (now - last < ms) return;
+    last = now;
+    return fn.apply(this, args);
+  };
+}
+
 export function cloneGameState(state) {
   return JSON.parse(JSON.stringify(state));
 }

@@ -12,7 +12,8 @@ import {
   CARD_BACKS, applyCardBack, randomCardBackIndex,
   cloneGameState, pushToHistory, showWinOverlay, hideWinOverlay,
   getCardOffset, wireGameControls, createDoubleTapHandler,
-  snapshotCardPositions, animateCardsFromSnapshot
+  snapshotCardPositions, animateCardsFromSnapshot,
+  throttleAction
 } from '../../js/shared/card-engine.js';
 
 (() => {
@@ -100,7 +101,7 @@ import {
   }
 
   // ---- Moves ----
-  function drawStock() {
+  const drawStock = throttleAction(function drawStock() {
     if (state.stock.length === 0 && state.waste.length === 0) return;
     pushHistory();
     const oldPositions = snapshotCardPositions($board);
@@ -125,7 +126,7 @@ import {
       if (!skipFlip) animateCardsFromSnapshot($board, oldPositions);
     }
     saveState();
-  }
+  });
 
   function moveCards(fromPile, fromIndex, toPile) {
     pushHistory();

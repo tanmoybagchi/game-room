@@ -9,7 +9,8 @@ import {
   clearSelection as clearSelectionUI,
   saveToStorage, loadFromStorage, clearStorage,
   cloneGameState, pushToHistory, showWinOverlay, hideWinOverlay,
-  wireGameControls
+  wireGameControls,
+  throttleAction
 } from '../../js/shared/card-engine.js';
 
 (() => {
@@ -167,7 +168,7 @@ import {
     }
   }
 
-  function drawStock() {
+  const drawStock = throttleAction(function drawStock() {
     if (state.stock.length === 0 && state.waste.length <= 1) return;
     pushHistory();
     if (state.stock.length === 0) {
@@ -190,7 +191,7 @@ import {
     clearSel();
     render();
     saveState();
-  }
+  });
 
   // ---- Win detection ----
   function checkWin() {

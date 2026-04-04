@@ -9,7 +9,8 @@ import {
   clearSelection as clearSelectionUI,
   saveToStorage, loadFromStorage, clearStorage,
   cloneGameState, pushToHistory, showWinOverlay, hideWinOverlay,
-  wireGameControls
+  wireGameControls,
+  throttleAction
 } from '../../js/shared/card-engine.js';
 
 (() => {
@@ -153,7 +154,7 @@ import {
     checkWin();
   }
 
-  function drawStock() {
+  const drawStock = throttleAction(function drawStock() {
     if (state.stock.length === 0 && state.waste.length <= 1) return;
     pushHist();
     if (state.stock.length === 0) {
@@ -172,7 +173,7 @@ import {
     moveCount++;
     render();
     saveState();
-  }
+  });
 
   function flipExposed() {
     for (let row = 0; row < 4; row++) {
