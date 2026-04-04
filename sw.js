@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gameroom-v6';
+const CACHE_NAME = 'gameroom-v7';
 const BASE = '/game-room';
 const ASSETS = [
   '/index.html',
@@ -10,6 +10,7 @@ const ASSETS = [
   '/js/shared/card-engine.js',
   '/js/shared/win-animation.js',
   '/js/shared/wake-lock.js',
+  '/js/shared/sw-update.js',
   '/images/spider.svg',
   '/games/freecell/index.html',
   '/games/freecell/freecell.css',
