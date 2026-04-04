@@ -4,11 +4,11 @@
 }
 
 :root {
-  --card-w: clamp(38px, 10vw, 65px);
-  --card-h: clamp(54px, 14vw, 93px);
-  --card-radius: clamp(3px, 0.6vw, 7px);
-  --card-font: clamp(1.5rem, 4vw, 2.4rem);
-  --card-suit-font: clamp(1.3rem, 3.5vw, 2rem);
+  --card-w: clamp(55px, 11vw, 90px);
+  --card-h: clamp(80px, 15.5vw, 130px);
+  --card-radius: clamp(4px, 0.8vw, 8px);
+  --card-font: clamp(1.8rem, 4.5vw, 3rem);
+  --card-suit-font: clamp(1.6rem, 4vw, 2.8rem);
   --tableau-offset: 0;
   --tableau-offset-down: 0;
 }
