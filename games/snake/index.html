@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Snake — Game Room</title>
+  <link rel="icon" href="../../favicon.svg">
+  <link rel="manifest" href="../../manifest.json">
+  <script data-sw="../../sw.js" src="../../js/shared/sw-update.js"></script>
+  <link rel="stylesheet" href="../../css/shared.css">
+  <link rel="stylesheet" href="../../css/game-shared.css">
+  <link rel="stylesheet" href="snake.css">
+  <script src="../../js/shared/wake-lock.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <h1>🐍 Snake</h1>
+    <div class="header-controls">
+      <button class="btn" id="btn-new-game">🔄 <span class="btn-label">New Game</span></button>
+      <button class="btn" id="btn-help" aria-label="How to play">ℹ</button>
+      <a href="../../" class="btn" aria-label="Home">🏠</a>
+    </div>
+  </header>
+
+  <dialog id="help-modal" class="help-modal">
+    <div class="help-modal-content">
+      <div class="help-modal-header">
+        <h2>How to Play</h2>
+        <button class="btn help-close" id="btn-help-close" aria-label="Close">&times;</button>
+      </div>
+      <p><strong>Goal:</strong> Eat food to grow longer without hitting the walls or yourself.</p>
+      <dl>
+        <dt>Move</dt>
+        <dd>Swipe or use arrow keys to change direction.</dd>
+        <dt>Food</dt>
+        <dd>Each food eaten scores 10 points and grows the snake.</dd>
+        <dt>Speed</dt>
+        <dd>The snake speeds up every 5 food eaten.</dd>
+      </dl>
+    </div>
+  </dialog>
+
+  <main class="container game-area">
+    <div class="status-bar">
+      <span id="score">Score: 0</span>
+      <span id="high-score">Best: 0</span>
+    </div>
+    <div class="board-wrapper">
+      <canvas id="board"></canvas>
+      <div id="start-overlay" class="start-overlay">
+        <button class="btn start-btn" id="btn-start">▶ Start</button>
+      </div>
+    </div>
+    <div class="touch-controls">
+      <div class="touch-row">
+        <button class="touch-btn" id="btn-up" aria-label="Up">▲</button>
+      </div>
+      <div class="touch-row">
+        <button class="touch-btn" id="btn-left" aria-label="Left">◀</button>
+        <button class="touch-btn" id="btn-down" aria-label="Down">▼</button>
+        <button class="touch-btn" id="btn-right" aria-label="Right">▶</button>
+      </div>
+    </div>
+  </main>
+
+  <div id="game-over-overlay" class="game-over-overlay" hidden>
+    <div class="game-over-content">
+      <h2>Game Over</h2>
+      <p>Score: <span id="final-score">0</span></p>
+      <button class="btn game-over-btn" id="btn-retry">Try Again</button>
+    </div>
+  </div>
+
+  <script type="module" src="snake.js"></script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gameroom-v14';
+const CACHE_NAME = 'gameroom-v15';
 const BASE = '/game-room';
 const ASSETS = [
   '/index.html',
@@ -59,7 +59,10 @@ const ASSETS = [
   '/games/tetris/tetris.js',
   '/games/breakout/index.html',
   '/games/breakout/breakout.css',
-  '/games/breakout/breakout.js'
+  '/games/breakout/breakout.js',
+  '/games/snake/index.html',
+  '/games/snake/snake.css',
+  '/games/snake/snake.js'
 ].map(path => BASE + path);
 
 self.addEventListener('install', event => {
