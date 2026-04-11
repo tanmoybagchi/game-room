@@ -426,6 +426,76 @@ import {
     return false;
   }
 
+  function tryAutoMove(source, col, cardIndex) {
+    // 1. Foundation (single top card only)
+    if (source === 'tableau') {
+      const pile = state.tableau[col];
+      if (cardIndex === pile.length - 1) {
+        const card = pile[pile.length - 1];
+        const fi = findFoundationForCard(card, state.foundations);
+        if (fi >= 0) { moveToFoundation(pile, pile.length - 1, fi); autoMoveToFoundations(); render(); saveState(); return true; }
+      }
+    } else if (source === 'freecell') {
+      const card = state.freeCells[col];
+      if (card) {
+        const fi = findFoundationForCard(card, state.foundations);
+        if (fi >= 0) { moveFreeCellToFoundation(col, fi); autoMoveToFoundations(); render(); saveState(); return true; }
+      }
+    }
+
+    // 2. Tableau — prefer non-empty columns first
+    if (source === 'tableau') {
+      const count = state.tableau[col].length - cardIndex;
+      for (let tc = 0; tc < 8; tc++) {
+        if (tc === col || state.tableau[tc].length === 0) continue;
+        if (count > maxMoveable(tc)) continue;
+        if (canPlaceOnTableau(state.tableau[col][cardIndex], tc)) {
+          moveCardsTableau(col, cardIndex, tc);
+          return true;
+        }
+      }
+    } else if (source === 'freecell') {
+      const card = state.freeCells[col];
+      if (card) {
+        for (let tc = 0; tc < 8; tc++) {
+          if (state.tableau[tc].length === 0) continue;
+          if (canPlaceOnTableau(card, tc)) { moveFromFreeCell(col, tc); return true; }
+        }
+      }
+    }
+
+    // 3. Free cell (single card from tableau only)
+    if (source === 'tableau') {
+      const pile = state.tableau[col];
+      if (cardIndex === pile.length - 1) {
+        const ci = state.freeCells.indexOf(null);
+        if (ci >= 0) { moveToFreeCell(pile, pile.length - 1, ci); return true; }
+      }
+    }
+
+    // 4. Empty tableau column (last resort)
+    if (source === 'tableau') {
+      const count = state.tableau[col].length - cardIndex;
+      for (let tc = 0; tc < 8; tc++) {
+        if (tc === col || state.tableau[tc].length > 0) continue;
+        if (count > maxMoveable(tc)) continue;
+        if (canPlaceOnTableau(state.tableau[col][cardIndex], tc)) {
+          moveCardsTableau(col, cardIndex, tc);
+          return true;
+        }
+      }
+    } else if (source === 'freecell') {
+      const card = state.freeCells[col];
+      if (card) {
+        for (let tc = 0; tc < 8; tc++) {
+          if (state.tableau[tc].length === 0) { moveFromFreeCell(col, tc); return true; }
+        }
+      }
+    }
+
+    return false;
+  }
+
   $board.addEventListener('click', (e) => {
     const cardEl = e.target.closest('.card');
     const pileEl = e.target.closest('.pile');
@@ -457,6 +527,8 @@ import {
     }
 
     if (source === 'tableau' && !isValidRun(state.tableau[col], cardIndex)) return;
+
+    if (tryAutoMove(source, col, cardIndex)) return;
 
     selectCard(source, col, cardIndex);
   });
