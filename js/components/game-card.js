@@ -71,8 +71,9 @@ class GameCard extends HTMLElement {
       .description {
         font-size: 0.85rem;
         color: var(--text-on-card, var(--text-secondary, #9aa0a6));
-        text-align: center;
+        text-align: left;
         line-height: 1.4;
+        align-self: stretch;
       }
     `;
 
