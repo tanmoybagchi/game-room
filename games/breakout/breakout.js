@@ -31,7 +31,8 @@ import { cascadeAnimation } from '../../js/shared/win-animation.js';
   $canvas.height = H;
 
   // ---- Game constants ----
-  const PADDLE_W = 80;
+  const IS_TOUCH = 'ontouchstart' in window;
+  const PADDLE_W = IS_TOUCH ? 110 : 80;
   const PADDLE_H = 12;
   const PADDLE_Y = H - 30;
   const BALL_R = 6;
@@ -50,7 +51,7 @@ import { cascadeAnimation } from '../../js/shared/win-animation.js';
   ];
   const ROW_POINTS = [7, 7, 5, 5, 3, 3, 1, 1];
 
-  const BASE_SPEED = 5;
+  const BASE_SPEED = IS_TOUCH ? 4 : 5;
 
   // ---- Game state ----
   let paddleX = 0;
@@ -284,8 +285,8 @@ import { cascadeAnimation } from '../../js/shared/win-animation.js';
     if (running && !launched) launched = true;
   });
 
-  // ---- Input: Touch ----
-  $canvas.addEventListener('touchmove', (e) => {
+  // ---- Input: Touch (whole document so finger doesn't block view) ----
+  document.addEventListener('touchmove', (e) => {
     if (!running) return;
     e.preventDefault();
     const rect = $canvas.getBoundingClientRect();
@@ -295,7 +296,7 @@ import { cascadeAnimation } from '../../js/shared/win-animation.js';
     if (!launched) ball.x = paddleX + PADDLE_W / 2;
   }, { passive: false });
 
-  $canvas.addEventListener('touchstart', (e) => {
+  document.addEventListener('touchstart', (e) => {
     if (running && !launched) {
       launched = true;
     }
