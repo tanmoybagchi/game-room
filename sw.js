@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gameroom-v18';
+const CACHE_NAME = 'gameroom-v19';
 const BASE = '/game-room';
 const ASSETS = [
   '/index.html',
@@ -68,7 +68,10 @@ const ASSETS = [
   '/games/nonogram/nonogram.js',
   '/games/space-invaders/index.html',
   '/games/space-invaders/space-invaders.css',
-  '/games/space-invaders/space-invaders.js'
+  '/games/space-invaders/space-invaders.js',
+  '/games/asteroids/index.html',
+  '/games/asteroids/asteroids.css',
+  '/games/asteroids/asteroids.js'
 ].map(path => BASE + path);
 
 self.addEventListener('install', event => {

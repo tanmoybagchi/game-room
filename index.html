@@ -42,6 +42,12 @@
         icon="⬆️"
       ></game-card>
       <game-card
+        name="Asteroids"
+        description="Blast drifting space rocks"
+        href="games/asteroids/"
+        icon="☄️"
+      ></game-card>
+      <game-card
         name="Breakout"
         description="Bounce and break all bricks"
         href="games/breakout/"
@@ -152,7 +158,7 @@
     </div>
   </main>
 
-  <footer class="site-footer"><span id="version" style="cursor:pointer">v18</span></footer>
+  <footer class="site-footer"><span id="version" style="cursor:pointer">v19</span></footer>
   <script>
     document.getElementById('version').addEventListener('click', async () => {
       const regs = await navigator.serviceWorker.getRegistrations();
