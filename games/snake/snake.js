@@ -2,14 +2,13 @@
 // Snake — Engine + UI
 // ============================================================
 
-import { cascadeAnimation } from '../../js/shared/win-animation.js';
-
 (() => {
   'use strict';
 
   // ---- Constants ----
   const GRID = 20; // cells per side
-  const BASE_INTERVAL = 150; // ms per tick at start
+  const IS_TOUCH = 'ontouchstart' in window;
+  const BASE_INTERVAL = IS_TOUCH ? 200 : 150; // ms per tick at start
   const SPEED_STEP = 5; // speed up every N food
 
   // ---- DOM refs ----
@@ -81,7 +80,6 @@ import { cascadeAnimation } from '../../js/shared/win-animation.js';
     running = true;
     $gameOver.hidden = true;
     $startOverlay.hidden = true;
-    document.querySelectorAll('.win-particle').forEach(el => el.remove());
     updateUI();
     draw();
     tickTimer = setInterval(tick, getInterval());
@@ -126,9 +124,6 @@ import { cascadeAnimation } from '../../js/shared/win-animation.js';
       food = randomFoodPos();
       updateUI();
 
-      // Milestone celebration every 50 points
-      if (score % 50 === 0) cascadeAnimation();
-
       // Speed up
       if (foodEaten % SPEED_STEP === 0) {
         clearInterval(tickTimer);
@@ -146,7 +141,7 @@ import { cascadeAnimation } from '../../js/shared/win-animation.js';
     ctx.clearRect(0, 0, SIZE, SIZE);
 
     // Grid
-    ctx.strokeStyle = '#1a1a1a';
+    ctx.strokeStyle = '#2a2a2a';
     ctx.lineWidth = 0.5;
     for (let i = 0; i <= GRID; i++) {
       ctx.beginPath();
