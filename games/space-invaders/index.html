@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Space Invaders — Game Room</title>
+  <link rel="icon" href="../../favicon.svg">
+  <link rel="manifest" href="../../manifest.json">
+  <script data-sw="../../sw.js" src="../../js/shared/sw-update.js"></script>
+  <link rel="stylesheet" href="../../css/shared.css">
+  <link rel="stylesheet" href="../../css/game-shared.css">
+  <link rel="stylesheet" href="space-invaders.css">
+  <script src="../../js/shared/wake-lock.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <h1>👾 Space Invaders</h1>
+    <div class="header-controls">
+      <button class="btn" id="btn-new-game">🔄 <span class="btn-label">New Game</span></button>
+      <button class="btn" id="btn-help" aria-label="How to play">ℹ</button>
+      <a href="../../" class="btn" aria-label="Home">🏠</a>
+    </div>
+  </header>
+
+  <dialog id="help-modal" class="help-modal">
+    <div class="help-modal-content">
+      <div class="help-modal-header">
+        <h2>How to Play</h2>
+        <button class="btn help-close" id="btn-help-close" aria-label="Close">&times;</button>
+      </div>
+      <p><strong>Goal:</strong> Destroy all the alien invaders before they reach the bottom.</p>
+      <dl>
+        <dt>Move</dt>
+        <dd>Arrow keys or drag on the screen to move your ship left/right.</dd>
+        <dt>Shoot</dt>
+        <dd>Press Space or tap the screen to fire. One shot on screen at a time.</dd>
+        <dt>Invaders</dt>
+        <dd>Aliens march sideways and drop down when they hit an edge. They speed up as you destroy them.</dd>
+        <dt>Scoring</dt>
+        <dd>Top row = 30 pts, middle rows = 20 pts, bottom rows = 10 pts.</dd>
+        <dt>Lives</dt>
+        <dd>You have 3 lives. Getting hit by an alien bullet costs one life.</dd>
+      </dl>
+    </div>
+  </dialog>
+
+  <main class="container game-area">
+    <div class="status-bar">
+      <span id="score">Score: 0</span>
+      <span id="level">Wave: 1</span>
+      <span id="lives">❤️❤️❤️</span>
+    </div>
+    <div class="board-wrapper">
+      <canvas id="board"></canvas>
+      <div id="start-overlay" class="start-overlay">
+        <button class="btn start-btn" id="btn-start">▶ Start</button>
+      </div>
+    </div>
+  </main>
+
+  <div id="game-over-overlay" class="game-over-overlay" hidden>
+    <div class="game-over-content">
+      <h2 id="game-over-title">Game Over</h2>
+      <p>Score: <span id="final-score">0</span></p>
+      <button class="btn game-over-btn" id="btn-retry">Try Again</button>
+    </div>
+  </div>
+
+  <script type="module" src="space-invaders.js"></script>
+</body>
+</html>

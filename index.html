@@ -102,6 +102,12 @@
         icon="🐍"
       ></game-card>
       <game-card
+        name="Space Invaders"
+        description="Defend Earth from aliens"
+        href="games/space-invaders/"
+        icon="👾"
+      ></game-card>
+      <game-card
         name="Spider Solitaire"
         description="Stack eight full suits"
         href="games/spider-solitaire/"
@@ -146,7 +152,7 @@
     </div>
   </main>
 
-  <footer class="site-footer"><span id="version" style="cursor:pointer">v1.14.0</span></footer>
+  <footer class="site-footer"><span id="version" style="cursor:pointer">v18</span></footer>
   <script>
     document.getElementById('version').addEventListener('click', async () => {
       const regs = await navigator.serviceWorker.getRegistrations();
