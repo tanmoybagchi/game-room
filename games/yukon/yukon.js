@@ -269,6 +269,35 @@ import {
     return false;
   }
 
+  function tryAutoMove(source, col, cardIndex) {
+    if (source !== 'tableau') return false;
+    const pile = state.tableau[col];
+
+    // 1. Foundation (single top card only)
+    if (cardIndex === pile.length - 1) {
+      const card = pile[pile.length - 1];
+      const fi = findFoundationForCard(card, state.foundations);
+      if (fi >= 0) { moveToFoundation(pile, pile.length - 1, fi); return true; }
+    }
+
+    // 2. Tableau — prefer non-empty columns first
+    const card = pile[cardIndex];
+    for (let tc = 0; tc < 7; tc++) {
+      if (tc === col || state.tableau[tc].length === 0) continue;
+      if (canPlaceOnTableau(card, tc)) { moveCards(pile, cardIndex, state.tableau[tc]); return true; }
+    }
+
+    // 3. Empty tableau column (Kings only, last resort)
+    if (card.rank === 'K' && cardIndex > 0) {
+      for (let tc = 0; tc < 7; tc++) {
+        if (tc === col) continue;
+        if (state.tableau[tc].length === 0) { moveCards(pile, cardIndex, state.tableau[tc]); return true; }
+      }
+    }
+
+    return false;
+  }
+
   $board.addEventListener('click', (e) => {
     const cardEl = e.target.closest('.card');
     const pileEl = e.target.closest('.pile');
@@ -296,6 +325,8 @@ import {
       clearSel();
       return;
     }
+
+    if (tryAutoMove(source, col, cardIndex)) return;
 
     selectCard(source, col, cardIndex);
   });
