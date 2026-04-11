@@ -42,6 +42,12 @@
         icon="⬆️"
       ></game-card>
       <game-card
+        name="Breakout"
+        description="Bounce and break all bricks"
+        href="games/breakout/"
+        icon="🏓"
+      ></game-card>
+      <game-card
         name="FreeCell"
         description="Strategic card sorting"
         href="games/freecell/"
@@ -128,7 +134,7 @@
     </div>
   </main>
 
-  <footer class="site-footer"><span id="version" style="cursor:pointer">v1.10.0</span></footer>
+  <footer class="site-footer"><span id="version" style="cursor:pointer">v1.11.0</span></footer>
   <script>
     document.getElementById('version').addEventListener('click', async () => {
       const regs = await navigator.serviceWorker.getRegistrations();

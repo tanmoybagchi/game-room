@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Breakout — Game Room</title>
+  <link rel="icon" href="../../favicon.svg">
+  <link rel="manifest" href="../../manifest.json">
+  <script data-sw="../../sw.js" src="../../js/shared/sw-update.js"></script>
+  <link rel="stylesheet" href="../../css/shared.css">
+  <link rel="stylesheet" href="../../css/game-shared.css">
+  <link rel="stylesheet" href="breakout.css">
+  <script src="../../js/shared/wake-lock.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <h1>🧱 Breakout</h1>
+    <div class="header-controls">
+      <button class="btn" id="btn-new-game">🔄 <span class="btn-label">New Game</span></button>
+      <button class="btn" id="btn-help" aria-label="How to play">ℹ</button>
+      <a href="../../" class="btn" aria-label="Home">🏠</a>
+    </div>
+  </header>
+
+  <dialog id="help-modal" class="help-modal">
+    <div class="help-modal-content">
+      <div class="help-modal-header">
+        <h2>How to Play</h2>
+        <button class="btn help-close" id="btn-help-close" aria-label="Close">&times;</button>
+      </div>
+      <p><strong>Goal:</strong> Break all the bricks by bouncing the ball off the paddle.</p>
+      <dl>
+        <dt>Move Paddle</dt>
+        <dd>Drag on the canvas or use left/right arrow keys.</dd>
+        <dt>Launch Ball</dt>
+        <dd>Tap the canvas or press Space to launch.</dd>
+        <dt>Lives</dt>
+        <dd>You have 3 lives. Losing the ball costs one life.</dd>
+        <dt>Scoring</dt>
+        <dd>Each brick is worth points based on its row. Higher rows score more.</dd>
+      </dl>
+    </div>
+  </dialog>
+
+  <main class="container game-area">
+    <div class="status-bar">
+      <span id="score">Score: 0</span>
+      <span id="level">Level: 1</span>
+      <span id="lives">❤️❤️❤️</span>
+    </div>
+    <div class="board-wrapper">
+      <canvas id="board"></canvas>
+      <div id="start-overlay" class="start-overlay">
+        <button class="btn start-btn" id="btn-start">▶ Start</button>
+      </div>
+    </div>
+  </main>
+
+  <div id="game-over-overlay" class="game-over-overlay" hidden>
+    <div class="game-over-content">
+      <h2 id="game-over-title">Game Over</h2>
+      <p>Score: <span id="final-score">0</span></p>
+      <button class="btn game-over-btn" id="btn-retry">Try Again</button>
+    </div>
+  </div>
+
+  <script type="module" src="breakout.js"></script>
+</body>
+</html>
