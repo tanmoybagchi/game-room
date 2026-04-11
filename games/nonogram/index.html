@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Nonogram — Game Room</title>
+  <link rel="icon" href="../../favicon.svg">
+  <link rel="manifest" href="../../manifest.json">
+  <script data-sw="../../sw.js" src="../../js/shared/sw-update.js"></script>
+  <link rel="stylesheet" href="../../css/shared.css">
+  <link rel="stylesheet" href="../../css/game-shared.css">
+  <link rel="stylesheet" href="nonogram.css">
+  <script src="../../js/shared/wake-lock.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <h1>🧩 Nonogram</h1>
+    <select class="btn" id="size-select">
+      <option value="5">5 × 5</option>
+      <option value="10" selected>10 × 10</option>
+      <option value="15">15 × 15</option>
+    </select>
+    <div class="header-controls">
+      <button class="btn" id="btn-mark-mode">✖ <span class="btn-label">Mark</span></button>
+      <button class="btn" id="btn-new-game">🧩 <span class="btn-label">New</span></button>
+      <button class="btn" id="btn-help" aria-label="How to play">ℹ</button>
+      <a href="../../" class="btn" aria-label="Home">🏠</a>
+    </div>
+  </header>
+
+  <dialog id="help-modal" class="help-modal">
+    <div class="help-modal-content">
+      <div class="help-modal-header">
+        <h2>How to Play</h2>
+        <button class="btn help-close" id="btn-help-close" aria-label="Close">&times;</button>
+      </div>
+      <p><strong>Goal:</strong> Fill in cells to reveal a hidden pattern using the number clues.</p>
+      <dl>
+        <dt>Clues</dt>
+        <dd>Numbers beside each row and above each column tell you how many consecutive filled cells appear, in order. Groups are separated by at least one empty cell.</dd>
+        <dt>Fill</dt>
+        <dd>Tap a cell to fill it.</dd>
+        <dt>Mark Empty</dt>
+        <dd>Toggle ✖ mode then tap, or right-click, to mark a cell as definitely empty.</dd>
+        <dt>Undo</dt>
+        <dd>Tap a filled or marked cell again to clear it.</dd>
+      </dl>
+    </div>
+  </dialog>
+
+  <main class="container game-area">
+    <div id="board-wrapper" class="board-wrapper">
+      <table id="board" class="nonogram-board"></table>
+    </div>
+  </main>
+
+  <div id="win-overlay" class="win-overlay" hidden>
+    <div class="win-content">
+      <h2>🎉 You Win!</h2>
+      <button class="btn win-btn" id="btn-play-again">Play Again</button>
+    </div>
+  </div>
+
+  <script type="module" src="nonogram.js"></script>
+</body>
+</html>

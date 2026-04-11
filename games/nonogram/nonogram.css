@@ -1,0 +1,247 @@
+/* ===== Nonogram-specific styles ===== */
+.game-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem clamp(0.5rem, 2vw, 2rem);
+}
+
+.board-wrapper {
+  overflow: auto;
+  max-width: 100%;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ===== Board table ===== */
+.nonogram-board {
+  border-collapse: collapse;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  margin: 0 auto;
+}
+
+/* ===== Clue cells ===== */
+.clue-cell {
+  padding: 2px;
+  text-align: center;
+  vertical-align: bottom;
+  font-size: clamp(0.55rem, 1.4vw, 0.8rem);
+  font-weight: 600;
+  color: var(--text-secondary);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.clue-cell.row-clue {
+  text-align: right;
+  vertical-align: middle;
+  padding-right: 6px;
+}
+
+.clue-cell.col-clue {
+  vertical-align: bottom;
+  padding-bottom: 4px;
+}
+
+.clue-cell .clue-nums {
+  display: flex;
+  gap: 1px;
+}
+
+.clue-cell.row-clue .clue-nums {
+  flex-direction: row;
+  justify-content: flex-end;
+  gap: 3px;
+}
+
+.clue-cell.col-clue .clue-nums {
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.clue-cell.satisfied {
+  color: rgba(255, 255, 255, 0.25);
+}
+
+/* ===== Grid cells ===== */
+.nono-cell {
+  width: clamp(22px, 5vw, 36px);
+  height: clamp(22px, 5vw, 36px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: var(--bg-secondary);
+  cursor: pointer;
+  transition: background 0.1s;
+  position: relative;
+}
+
+.nono-cell:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.nono-cell.filled {
+  background: var(--accent);
+  border-color: rgba(0, 0, 0, 0.2);
+}
+
+.nono-cell.marked {
+  background: var(--bg-secondary);
+}
+
+.nono-cell.marked::after {
+  content: '✕';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(0.65rem, 1.8vw, 1rem);
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 700;
+}
+
+/* ===== 5-cell group borders ===== */
+.nono-cell.border-right {
+  border-right: 2px solid rgba(255, 255, 255, 0.45);
+}
+
+.nono-cell.border-bottom {
+  border-bottom: 2px solid rgba(255, 255, 255, 0.45);
+}
+
+/* ===== Board outer border ===== */
+.nonogram-board td.nono-cell:first-of-type {
+  border-left: 2px solid rgba(255, 255, 255, 0.45);
+}
+
+tr:last-child .nono-cell {
+  border-bottom: 2px solid rgba(255, 255, 255, 0.45);
+}
+
+tr:first-of-type td.nono-cell {
+  border-top: 2px solid rgba(255, 255, 255, 0.45);
+}
+
+td.nono-cell:last-child {
+  border-right: 2px solid rgba(255, 255, 255, 0.45);
+}
+
+/* ===== Corner spacer ===== */
+.corner-spacer {
+  /* empty top-left corner */
+}
+
+/* ===== Mark mode active ===== */
+#btn-mark-mode.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--text-on-card);
+}
+
+/* ===== Help modal shared ===== */
+.help-modal {
+  background: transparent;
+  border: none;
+  padding: 0;
+  max-width: min(90vw, 420px);
+}
+
+.help-modal::backdrop {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.help-modal-content {
+  background: var(--bg-card);
+  color: var(--text-on-card);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  line-height: 1.6;
+}
+
+.help-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.help-modal-header h2 {
+  font-size: 1.2rem;
+}
+
+.help-close {
+  font-size: 1.4rem;
+  line-height: 1;
+  padding: 0.2rem 0.5rem;
+}
+
+.help-modal dl {
+  margin-top: 0.75rem;
+}
+
+.help-modal dt {
+  font-weight: 700;
+  margin-top: 0.6rem;
+}
+
+.help-modal dd {
+  margin-left: 0.5rem;
+  color: #555;
+}
+
+/* ===== Win overlay ===== */
+.win-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.65);
+  z-index: 100;
+}
+
+.win-content {
+  text-align: center;
+  background: var(--bg-card);
+  color: var(--text-on-card);
+  padding: 2rem 3rem;
+  border-radius: var(--radius);
+  box-shadow: 0 8px 32px var(--shadow);
+}
+
+.win-content h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+}
+
+.win-btn {
+  font-size: 1rem;
+  padding: 0.6rem 1.6rem;
+}
+
+/* ===== Mobile tweaks ===== */
+@media (max-width: 600px) {
+  .nono-cell {
+    width: clamp(18px, 7vw, 30px);
+    height: clamp(18px, 7vw, 30px);
+  }
+
+  .clue-cell {
+    font-size: clamp(0.5rem, 2.5vw, 0.7rem);
+  }
+}
+
+/* ===== Highlight row/col on hover ===== */
+.nono-cell.highlight-row {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.nono-cell.highlight-col {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.nono-cell.filled.highlight-row,
+.nono-cell.filled.highlight-col {
+  background: var(--accent);
+}
