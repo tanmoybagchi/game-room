@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Tetris — Game Room</title>
+  <link rel="icon" href="../../favicon.svg">
+  <link rel="manifest" href="../../manifest.json">
+  <script data-sw="../../sw.js" src="../../js/shared/sw-update.js"></script>
+  <link rel="stylesheet" href="../../css/shared.css">
+  <link rel="stylesheet" href="../../css/game-shared.css">
+  <link rel="stylesheet" href="tetris.css">
+  <script src="../../js/shared/wake-lock.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <h1>🧱 Tetris</h1>
+    <div class="header-controls">
+      <button class="btn" id="btn-new-game">🔄 <span class="btn-label">New Game</span></button>
+      <button class="btn" id="btn-help" aria-label="How to play">ℹ</button>
+      <a href="../../" class="btn" aria-label="Home">🏠</a>
+    </div>
+  </header>
+
+  <dialog id="help-modal" class="help-modal">
+    <div class="help-modal-content">
+      <div class="help-modal-header">
+        <h2>How to Play</h2>
+        <button class="btn help-close" id="btn-help-close" aria-label="Close">&times;</button>
+      </div>
+      <p><strong>Goal:</strong> Clear lines by filling complete rows with blocks.</p>
+      <dl>
+        <dt>Move</dt>
+        <dd>Swipe left/right or use arrow keys to move the piece.</dd>
+        <dt>Rotate</dt>
+        <dd>Tap the board or press Up arrow to rotate.</dd>
+        <dt>Soft Drop</dt>
+        <dd>Swipe down or press Down arrow to drop faster.</dd>
+        <dt>Hard Drop</dt>
+        <dd>Swipe up or press Space to instantly drop the piece.</dd>
+        <dt>Scoring</dt>
+        <dd>1 line = 100 pts, 2 = 300, 3 = 500, 4 (Tetris) = 800. Level multiplier applies.</dd>
+      </dl>
+    </div>
+  </dialog>
+
+  <main class="container game-area">
+    <div class="tetris-layout">
+      <div class="side-panel">
+        <div class="panel-box">
+          <div class="panel-label">Next</div>
+          <canvas id="next-canvas" width="100" height="100"></canvas>
+        </div>
+        <div class="panel-box">
+          <div class="panel-label">Score</div>
+          <div class="panel-value" id="score">0</div>
+        </div>
+        <div class="panel-box">
+          <div class="panel-label">Level</div>
+          <div class="panel-value" id="level">1</div>
+        </div>
+        <div class="panel-box">
+          <div class="panel-label">Lines</div>
+          <div class="panel-value" id="lines">0</div>
+        </div>
+      </div>
+      <div class="board-wrapper">
+        <canvas id="board" width="300" height="600"></canvas>
+        <div id="start-overlay" class="start-overlay">
+          <button class="btn start-btn" id="btn-start">▶ Start</button>
+        </div>
+      </div>
+    </div>
+    <div class="touch-controls">
+      <button class="touch-btn" id="btn-left" aria-label="Move left">◀</button>
+      <button class="touch-btn" id="btn-rotate" aria-label="Rotate">↻</button>
+      <button class="touch-btn" id="btn-down" aria-label="Soft drop">▼</button>
+      <button class="touch-btn" id="btn-right" aria-label="Move right">▶</button>
+      <button class="touch-btn" id="btn-drop" aria-label="Hard drop">⏬</button>
+    </div>
+  </main>
+
+  <div id="game-over-overlay" class="game-over-overlay" hidden>
+    <div class="game-over-content">
+      <h2>Game Over</h2>
+      <p>Score: <span id="final-score">0</span></p>
+      <button class="btn game-over-btn" id="btn-retry">Try Again</button>
+    </div>
+  </div>
+
+  <script type="module" src="tetris.js"></script>
+</body>
+</html>
