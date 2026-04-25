@@ -158,9 +158,12 @@
     </div>
   </main>
 
-  <footer class="site-footer"><span id="version" style="cursor:pointer">v21</span></footer>
+  <footer class="site-footer"><span id="version" style="cursor:pointer"></span></footer>
+  <script src="version.js"></script>
   <script>
-    document.getElementById('version').addEventListener('click', async () => {
+    const versionEl = document.getElementById('version');
+    versionEl.textContent = APP_VERSION;
+    versionEl.addEventListener('click', async () => {
       const regs = await navigator.serviceWorker.getRegistrations();
       await Promise.all(regs.map(r => r.unregister()));
       const keys = await caches.keys();

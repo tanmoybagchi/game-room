@@ -1,7 +1,9 @@
-const CACHE_NAME = 'gameroom-v21';
+importScripts('version.js');
+const CACHE_NAME = `gameroom-${APP_VERSION}`;
 const BASE = '/game-room';
 const ASSETS = [
   '/index.html',
+  '/version.js',
   '/manifest.json',
   '/favicon.svg',
   '/css/shared.css',
