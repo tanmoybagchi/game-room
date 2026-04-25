@@ -35,6 +35,7 @@ import {
   let moveCount = 0;
   let selectedCard = null;
   let skipFlip = false;
+  let autoCompleting = false;
 
   // ---- State management ----
   function newGame() {
@@ -138,6 +139,7 @@ import {
     if (!skipFlip) animateCardsFromSnapshot($board, oldPositions);
     saveState();
     checkWin();
+    scheduleAutoMoves();
   }
 
   function moveToFreeCell(sourcePile, cardIndex, cellIndex) {
@@ -182,24 +184,37 @@ import {
     if (!skipFlip) animateCardsFromSnapshot($board, oldPositions);
     saveState();
     checkWin();
+    scheduleAutoMoves();
     return true;
   }
 
-  function autoMoveToFoundations() {
-    let moved = true;
-    while (moved) {
-      moved = false;
-      for (let ci = 0; ci < 4; ci++) {
-        const card = state.freeCells[ci];
-        if (!card) continue;
-        if (!isSafeAutoMove(card)) continue;
-        const fi = findFoundationForCard(card, state.foundations);
-        if (fi >= 0) {
-          state.freeCells[ci] = null;
-          state.foundations[fi].push(card);
-          moved = true;
-        }
+  let autoMoving = false;
+
+  function scheduleAutoMoves() {
+    if (autoMoving || autoCompleting) return;
+    autoMoving = true;
+    setTimeout(stepAutoMove, 250);
+  }
+
+  function stepAutoMove() {
+    let moved = false;
+    for (let ci = 0; ci < 4; ci++) {
+      const card = state.freeCells[ci];
+      if (!card || !isSafeAutoMove(card)) continue;
+      const fi = findFoundationForCard(card, state.foundations);
+      if (fi >= 0) {
+        const oldPositions = snapshotCardPositions($board);
+        state.freeCells[ci] = null;
+        state.foundations[fi].push(card);
+        moveCount++;
+        render();
+        animateCardsFromSnapshot($board, oldPositions);
+        saveState();
+        moved = true;
+        break;
       }
+    }
+    if (!moved) {
       for (let col = 0; col < 8; col++) {
         const pile = state.tableau[col];
         if (pile.length === 0) continue;
@@ -207,11 +222,23 @@ import {
         if (!isSafeAutoMove(card)) continue;
         const fi = findFoundationForCard(card, state.foundations);
         if (fi >= 0) {
+          const oldPositions = snapshotCardPositions($board);
           pile.pop();
           state.foundations[fi].push(card);
+          moveCount++;
+          render();
+          animateCardsFromSnapshot($board, oldPositions);
+          saveState();
           moved = true;
+          break;
         }
       }
+    }
+    if (moved) {
+      checkWin();
+      setTimeout(stepAutoMove, 250);
+    } else {
+      autoMoving = false;
     }
   }
 
@@ -235,7 +262,55 @@ import {
 
   // ---- Win detection ----
   function checkWin() {
-    if (state.foundations.every(f => f.length === 13)) showWinOverlay($winOverlay);
+    if (state.foundations.every(f => f.length === 13)) { showWinOverlay($winOverlay); return; }
+    if (!autoCompleting && isGameTrivial()) autoComplete();
+  }
+
+  function isGameTrivial() {
+    if (state.freeCells.some(c => c !== null)) return false;
+    for (const pile of state.tableau) {
+      for (let i = 0; i < pile.length - 1; i++) {
+        if (RANK_VALUES[pile[i].rank] < RANK_VALUES[pile[i + 1].rank]) return false;
+      }
+    }
+    return true;
+  }
+
+  function autoComplete() {
+    autoCompleting = true;
+    const flyDuration = 0.45;
+    const interval = flyDuration * 1000 + 60;
+    moveNext();
+
+    function moveNext() {
+      let moved = false;
+      for (let col = 0; col < 8; col++) {
+        const pile = state.tableau[col];
+        if (pile.length === 0) continue;
+        const card = pile[pile.length - 1];
+        const fi = findFoundationForCard(card, state.foundations);
+        if (fi >= 0) {
+          const oldPositions = snapshotCardPositions($board);
+          pile.pop();
+          state.foundations[fi].push(card);
+          moveCount++;
+          render();
+          animateCardsFromSnapshot($board, oldPositions, { duration: flyDuration });
+          moved = true;
+          break;
+        }
+      }
+      if (state.foundations.every(f => f.length === 13)) {
+        autoCompleting = false;
+        saveState();
+        showWinOverlay($winOverlay);
+      } else if (moved) {
+        setTimeout(moveNext, interval);
+      } else {
+        autoCompleting = false;
+        saveState();
+      }
+    }
   }
 
   // ---- Rendering ----
@@ -402,7 +477,7 @@ import {
       if (cardIndex !== pile.length - 1) return false;
       const card = pile[pile.length - 1];
       const fi = findFoundationForCard(card, state.foundations);
-      if (fi >= 0) { moveToFoundation(pile, pile.length - 1, fi); autoMoveToFoundations(); render(); saveState(); return true; }
+      if (fi >= 0) { moveToFoundation(pile, pile.length - 1, fi); return true; }
       // Fallback: move to an empty tableau column
       for (let tc = 0; tc < 8; tc++) {
         if (tc !== col && state.tableau[tc].length === 0) {
@@ -414,7 +489,7 @@ import {
       const card = state.freeCells[col];
       if (!card) return false;
       const fi = findFoundationForCard(card, state.foundations);
-      if (fi >= 0) { moveFreeCellToFoundation(col, fi); autoMoveToFoundations(); render(); saveState(); return true; }
+      if (fi >= 0) { moveFreeCellToFoundation(col, fi); return true; }
       // Fallback: move to an empty tableau column
       for (let tc = 0; tc < 8; tc++) {
         if (state.tableau[tc].length === 0) {
@@ -433,13 +508,13 @@ import {
       if (cardIndex === pile.length - 1) {
         const card = pile[pile.length - 1];
         const fi = findFoundationForCard(card, state.foundations);
-        if (fi >= 0) { moveToFoundation(pile, pile.length - 1, fi); autoMoveToFoundations(); render(); saveState(); return true; }
+        if (fi >= 0) { moveToFoundation(pile, pile.length - 1, fi); return true; }
       }
     } else if (source === 'freecell') {
       const card = state.freeCells[col];
       if (card) {
         const fi = findFoundationForCard(card, state.foundations);
-        if (fi >= 0) { moveFreeCellToFoundation(col, fi); autoMoveToFoundations(); render(); saveState(); return true; }
+        if (fi >= 0) { moveFreeCellToFoundation(col, fi); return true; }
       }
     }
 
@@ -497,6 +572,7 @@ import {
   }
 
   $board.addEventListener('click', (e) => {
+    if (autoCompleting || autoMoving) return;
     const cardEl = e.target.closest('.card');
     const pileEl = e.target.closest('.pile');
 
@@ -535,6 +611,7 @@ import {
 
   // ---- Double-click: auto-move to foundation (desktop) ----
   $board.addEventListener('dblclick', (e) => {
+    if (autoCompleting || autoMoving) return;
     const cardEl = e.target.closest('.card.face-up');
     if (!cardEl) return;
     clearSel();
@@ -550,6 +627,7 @@ import {
   let dragGhost = null;
 
   $board.addEventListener('dragstart', (e) => {
+    if (autoCompleting || autoMoving) { e.preventDefault(); return; }
     const cardEl = e.target.closest('.card.face-up');
     if (!cardEl) { e.preventDefault(); return; }
     clearSel();
@@ -623,17 +701,10 @@ import {
           const card = pile[pile.length - 1];
           if (canPlaceOnFoundation(card, targetIndex, state.foundations)) {
             moveToFoundation(pile, pile.length - 1, targetIndex);
-            autoMoveToFoundations();
-            render();
-            saveState();
           }
         }
       } else if (dd.source === 'freecell') {
-        if (moveFreeCellToFoundation(dd.col, targetIndex)) {
-          autoMoveToFoundations();
-          render();
-          saveState();
-        }
+        moveFreeCellToFoundation(dd.col, targetIndex);
       }
     } else if (targetType === 'freecell') {
       if (dd.source === 'tableau') {

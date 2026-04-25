@@ -109,7 +109,7 @@ export function snapshotCardPositions(board, keyFn = defaultCardKey) {
   return positions;
 }
 
-export function animateCardsFromSnapshot(board, oldPositions, { keyFn = defaultCardKey, keyMapping = null } = {}) {
+export function animateCardsFromSnapshot(board, oldPositions, { keyFn = defaultCardKey, keyMapping = null, duration = 0.2 } = {}) {
   const toAnimate = [];
   board.querySelectorAll('.card').forEach(el => {
     const key = keyFn(el);
@@ -135,7 +135,7 @@ export function animateCardsFromSnapshot(board, oldPositions, { keyFn = defaultC
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       toAnimate.forEach(({ el, origZ }) => {
-        el.style.transition = 'transform 0.2s ease-out';
+        el.style.transition = `transform ${duration}s ease-out`;
         el.style.transform = '';
         el.addEventListener('transitionend', () => {
           el.style.transition = '';
