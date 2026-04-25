@@ -48,7 +48,7 @@
 .card-front {
   background: var(--bg-card);
   color: var(--text-on-card);
-  font-size: clamp(1.8rem, 6vw, 3rem);
+  font-size: clamp(3.5rem, 13vw, 6.5rem);
   transform: rotateY(180deg);
 }
 

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gameroom-v20';
+const CACHE_NAME = 'gameroom-v21';
 const BASE = '/game-room';
 const ASSETS = [
   '/index.html',
