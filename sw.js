@@ -73,7 +73,10 @@ const ASSETS = [
   '/games/space-invaders/space-invaders.js',
   '/games/asteroids/index.html',
   '/games/asteroids/asteroids.css',
-  '/games/asteroids/asteroids.js'
+  '/games/asteroids/asteroids.js',
+  '/games/tower-defense/index.html',
+  '/games/tower-defense/tower-defense.css',
+  '/games/tower-defense/tower-defense.js'
 ].map(path => BASE + path);
 
 self.addEventListener('install', event => {

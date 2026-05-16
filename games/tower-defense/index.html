@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Tower Defense — Game Room</title>
+  <link rel="icon" href="../../favicon.svg">
+  <link rel="manifest" href="../../manifest.json">
+  <script data-sw="../../sw.js" src="../../js/shared/sw-update.js"></script>
+  <link rel="stylesheet" href="../../css/shared.css">
+  <link rel="stylesheet" href="../../css/game-shared.css">
+  <link rel="stylesheet" href="tower-defense.css">
+  <script src="../../js/shared/wake-lock.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <h1>Tower Defense</h1>
+    <div class="header-controls">
+      <button class="btn" id="btn-pause">⏸️ <span class="btn-label">Pause</span></button>
+      <button class="btn" id="btn-new-game">🔄 <span class="btn-label">New Game</span></button>
+      <button class="btn" id="btn-help" aria-label="How to play">ℹ</button>
+      <a href="../../" class="btn" aria-label="Home">🏠</a>
+    </div>
+  </header>
+
+  <dialog id="help-modal" class="help-modal">
+    <div class="help-modal-content">
+      <div class="help-modal-header">
+        <h2>How to Play</h2>
+        <button class="btn help-close" id="btn-help-close" aria-label="Close">&times;</button>
+      </div>
+      <p><strong>Goal:</strong> Defend your base by building towers to destroy alien waves.</p>
+      <dl>
+        <dt>Place Towers</dt>
+        <dd>Select a tower from the bottom panel, then tap any open tile (not on the path) to place it.</dd>
+        <dt>Upgrade / Sell</dt>
+        <dd>Tap a placed tower to see upgrade and sell options.</dd>
+        <dt>Waves</dt>
+        <dd>Survive all 10 waves to win. Press "Next Wave" when ready between waves.</dd>
+        <dt>Lives</dt>
+        <dd>You start with 20 lives. Enemies that reach the exit cost lives.</dd>
+        <dt>Credits</dt>
+        <dd>Earn credits by killing enemies and completing waves. Spend them on towers and upgrades.</dd>
+      </dl>
+      <h3>Towers</h3>
+      <dl>
+        <dt>Laser Turret (50)</dt><dd>Fast single-target damage.</dd>
+        <dt>Missile Launcher (100)</dt><dd>Slow but deals splash damage.</dd>
+        <dt>Tesla Coil (80)</dt><dd>Rapid fire, chains to nearby enemies.</dd>
+        <dt>Cryo Cannon (75)</dt><dd>Slows enemies down.</dd>
+        <dt>Railgun (150)</dt><dd>Long-range, pierces all enemies in a line.</dd>
+      </dl>
+    </div>
+  </dialog>
+
+  <main class="container game-area">
+    <div class="status-bar">
+      <span id="wave-info">Wave: 0/10</span>
+      <span id="credits-display">Credits: 300</span>
+      <span id="lives-display">Lives: 20</span>
+    </div>
+    <div class="board-wrapper">
+      <canvas id="board"></canvas>
+    </div>
+  </main>
+
+  <div id="win-overlay" class="game-over-overlay" hidden>
+    <div class="game-over-content">
+      <h2>Victory!</h2>
+      <p>All waves defeated!</p>
+      <button class="btn game-over-btn" id="btn-play-again">Play Again</button>
+    </div>
+  </div>
+
+  <div id="game-over-overlay" class="game-over-overlay" hidden>
+    <div class="game-over-content">
+      <h2>Game Over</h2>
+      <p>The aliens broke through!</p>
+      <button class="btn game-over-btn" id="btn-retry">Try Again</button>
+    </div>
+  </div>
+
+  <script type="module" src="tower-defense.js"></script>
+</body>
+</html>
