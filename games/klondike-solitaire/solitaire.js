@@ -13,7 +13,8 @@ import {
   cloneGameState, pushToHistory, showWinOverlay, hideWinOverlay,
   getCardOffset, wireGameControls, createDoubleTapHandler,
   snapshotCardPositions, animateCardsFromSnapshot,
-  throttleAction
+  throttleAction,
+  AUTO_COMPLETE_FLY_DURATION, AUTO_COMPLETE_INTERVAL
 } from '../../js/shared/card-engine.js';
 
 (() => {
@@ -180,35 +181,38 @@ import {
     autoCompleting = true;
     moveNext();
 
+    // Fly one card to a foundation, animated. Returns true if a card moved.
+    function flyToFoundation(pile) {
+      if (pile.length === 0) return false;
+      const card = pile[pile.length - 1];
+      const fi = findFoundationForCard(card, state.foundations);
+      if (fi < 0) return false;
+      const oldPositions = snapshotCardPositions($board);
+      pile.pop();
+      state.foundations[fi].push(card);
+      moveCount++;
+      render();
+      animateCardsFromSnapshot($board, oldPositions, { duration: AUTO_COMPLETE_FLY_DURATION });
+      return true;
+    }
+
     function moveNext() {
-      let moved = false;
-      // Try waste first
-      if (state.waste.length > 0) {
-        const card = state.waste[state.waste.length - 1];
-        const fi = findFoundationForCard(card, state.foundations);
-        if (fi >= 0) {
-          moveToFoundation(state.waste, state.waste.length - 1, fi);
-          moved = true;
-        }
-      }
-      // Try tableau columns
+      // Try waste first, then tableau columns
+      let moved = flyToFoundation(state.waste);
       if (!moved) {
-        for (let col = 0; col < 7; col++) {
-          const pile = state.tableau[col];
-          if (pile.length === 0) continue;
-          const card = pile[pile.length - 1];
-          const fi = findFoundationForCard(card, state.foundations);
-          if (fi >= 0) {
-            moveToFoundation(pile, pile.length - 1, fi);
-            moved = true;
-            break;
-          }
+        for (let col = 0; col < 7 && !moved; col++) {
+          moved = flyToFoundation(state.tableau[col]);
         }
       }
-      if (moved && !state.foundations.every(f => f.length === 13)) {
-        setTimeout(moveNext, 80);
+      if (state.foundations.every(f => f.length === 13)) {
+        autoCompleting = false;
+        saveState();
+        showWinOverlay($winOverlay);
+      } else if (moved) {
+        setTimeout(moveNext, AUTO_COMPLETE_INTERVAL);
       } else {
         autoCompleting = false;
+        saveState();
       }
     }
   }

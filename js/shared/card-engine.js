@@ -97,6 +97,14 @@ function defaultCardKey(el) {
   return null;
 }
 
+// ---- Auto-move timing (shared by all card games) ----
+// Duration of each card's flight to the foundation, in seconds. Matches the
+// default animateCardsFromSnapshot duration so auto-moves feel like normal moves.
+export const AUTO_COMPLETE_FLY_DURATION = 0.2;
+// Gap between consecutive auto-complete moves, in ms. Slightly longer than the
+// flight so each card lands before the next one takes off.
+export const AUTO_COMPLETE_INTERVAL = AUTO_COMPLETE_FLY_DURATION * 1000 + 60;
+
 export function snapshotCardPositions(board, keyFn = defaultCardKey) {
   const positions = new Map();
   board.querySelectorAll('.card').forEach(el => {

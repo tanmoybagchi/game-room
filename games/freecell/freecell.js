@@ -11,7 +11,8 @@ import {
   saveToStorage, loadFromStorage, clearStorage,
   cloneGameState, pushToHistory, showWinOverlay, hideWinOverlay,
   wireGameControls, createDoubleTapHandler,
-  snapshotCardPositions, animateCardsFromSnapshot
+  snapshotCardPositions, animateCardsFromSnapshot,
+  AUTO_COMPLETE_FLY_DURATION, AUTO_COMPLETE_INTERVAL
 } from '../../js/shared/card-engine.js';
 
 (() => {
@@ -193,7 +194,7 @@ import {
   function scheduleAutoMoves() {
     if (autoMoving || autoCompleting) return;
     autoMoving = true;
-    setTimeout(stepAutoMove, 250);
+    setTimeout(stepAutoMove, AUTO_COMPLETE_INTERVAL);
   }
 
   function stepAutoMove() {
@@ -208,7 +209,7 @@ import {
         state.foundations[fi].push(card);
         moveCount++;
         render();
-        animateCardsFromSnapshot($board, oldPositions);
+        animateCardsFromSnapshot($board, oldPositions, { duration: AUTO_COMPLETE_FLY_DURATION });
         saveState();
         moved = true;
         break;
@@ -236,7 +237,7 @@ import {
     }
     if (moved) {
       checkWin();
-      setTimeout(stepAutoMove, 250);
+      setTimeout(stepAutoMove, AUTO_COMPLETE_INTERVAL);
     } else {
       autoMoving = false;
     }
@@ -278,8 +279,6 @@ import {
 
   function autoComplete() {
     autoCompleting = true;
-    const flyDuration = 0.45;
-    const interval = flyDuration * 1000 + 60;
     moveNext();
 
     function moveNext() {
@@ -295,7 +294,7 @@ import {
           state.foundations[fi].push(card);
           moveCount++;
           render();
-          animateCardsFromSnapshot($board, oldPositions, { duration: flyDuration });
+          animateCardsFromSnapshot($board, oldPositions, { duration: AUTO_COMPLETE_FLY_DURATION });
           moved = true;
           break;
         }
@@ -305,7 +304,7 @@ import {
         saveState();
         showWinOverlay($winOverlay);
       } else if (moved) {
-        setTimeout(moveNext, interval);
+        setTimeout(moveNext, AUTO_COMPLETE_INTERVAL);
       } else {
         autoCompleting = false;
         saveState();
