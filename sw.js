@@ -76,7 +76,16 @@ const ASSETS = [
   '/games/asteroids/asteroids.js',
   '/games/tower-defense/index.html',
   '/games/tower-defense/tower-defense.css',
-  '/games/tower-defense/tower-defense.js'
+  '/games/tower-defense/tower-defense.js',
+  '/games/poker/index.html',
+  '/games/poker/poker.css',
+  '/games/poker/poker.js',
+  '/games/poker/hand-eval.js',
+  '/games/poker/engine.js',
+  '/games/poker/bot.js',
+  '/games/poker/ui.js',
+  '/games/poker/tutorial.js',
+  '/games/poker/lessons.js'
 ].map(path => BASE + path);
 
 self.addEventListener('install', event => {

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Poker — Game Room</title>
+  <link rel="icon" href="../../favicon.svg">
+  <link rel="manifest" href="../../manifest.json">
+  <script data-sw="../../sw.js" src="../../js/shared/sw-update.js"></script>
+  <link rel="stylesheet" href="../../css/shared.css">
+  <link rel="stylesheet" href="../../css/game-shared.css">
+  <link rel="stylesheet" href="poker.css">
+  <script src="../../js/shared/wake-lock.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <h1><span style="color:#1a1d27">♠</span><span style="color:#ef233c">♥</span> Poker</h1>
+    <div class="header-controls">
+      <button class="btn" id="btn-menu" aria-label="Menu">☰ <span class="btn-label">Menu</span></button>
+      <button class="btn" id="btn-new-game">🔄 <span class="btn-label" id="btn-new-game-label">New Hand</span></button>
+      <button class="btn" id="btn-help" aria-label="How to play">ℹ</button>
+      <a href="../../" class="btn" aria-label="Home">🏠</a>
+    </div>
+  </header>
+
+  <!-- How to Play modal -->
+  <dialog id="help-modal" class="help-modal">
+    <div class="help-modal-content">
+      <div class="help-modal-header">
+        <h2>How to Play</h2>
+        <button class="btn help-close" id="btn-help-close" aria-label="Close">&times;</button>
+      </div>
+      <p><strong>Goal:</strong> Win chips by making the best five-card hand from your two hole cards and the five community cards, or by getting everyone else to fold.</p>
+      <dl>
+        <dt>Blinds</dt>
+        <dd>The two players left of the dealer button post forced bets (small and big blind) before the cards are dealt.</dd>
+        <dt>Streets</dt>
+        <dd>Betting happens preflop, then after the flop (3 cards), turn (1 card) and river (1 card).</dd>
+        <dt>Actions</dt>
+        <dd><kbd>Fold</kbd> give up the hand. <kbd>Check</kbd> pass when nothing is owed. <kbd>Call</kbd> match the bet. <kbd>Raise</kbd> increase the bet.</dd>
+      </dl>
+      <h3>Hand Rankings (best to worst)</h3>
+      <dl class="rankings">
+        <dt>Royal Flush</dt><dd>A K Q J 10, all the same suit</dd>
+        <dt>Straight Flush</dt><dd>Five in a row, same suit</dd>
+        <dt>Four of a Kind</dt><dd>Four cards of one rank</dd>
+        <dt>Full House</dt><dd>Three of a kind plus a pair</dd>
+        <dt>Flush</dt><dd>Five cards of one suit</dd>
+        <dt>Straight</dt><dd>Five in a row, mixed suits</dd>
+        <dt>Three of a Kind</dt><dd>Three cards of one rank</dd>
+        <dt>Two Pair</dt><dd>Two different pairs</dd>
+        <dt>Pair</dt><dd>Two cards of one rank</dd>
+        <dt>High Card</dt><dd>Nothing else; highest card wins</dd>
+      </dl>
+      <p>New to poker? Open the <strong>Menu</strong> and pick <strong>Tutorial</strong> for an interactive course.</p>
+    </div>
+  </dialog>
+
+  <main id="game-board" class="game-board poker-main">
+
+    <!-- Start screen -->
+    <section id="start-screen" class="screen">
+      <div class="start-card">
+        <h2>Texas Hold'em</h2>
+        <p class="bankroll-line">Bankroll <strong id="bankroll-display">1000</strong></p>
+        <label class="field" for="bot-count">Opponents
+          <select class="btn" id="bot-count">
+            <option value="2">2</option>
+            <option value="3" selected>3</option>
+            <option value="4">4</option>
+          </select>
+        </label>
+        <button class="btn start-btn" id="btn-play">▶ Play</button>
+        <button class="btn start-btn secondary" id="btn-tutorial">🎓 Tutorial</button>
+      </div>
+    </section>
+
+    <!-- Lesson list -->
+    <section id="lesson-list" class="screen" hidden>
+      <div class="start-card lessons-card">
+        <h2>Poker School</h2>
+        <p id="course-progress" class="course-progress"></p>
+        <ol id="lessons" class="lessons"></ol>
+        <button class="btn" id="btn-lessons-back">← Back</button>
+      </div>
+    </section>
+
+    <!-- Table -->
+    <section id="table-screen" class="screen" hidden>
+      <div id="table" class="poker-table">
+        <div id="bots-row" class="bots-row"></div>
+        <div class="table-center">
+          <div id="pot" class="pot">Pot: 0</div>
+          <div id="community" class="community" aria-label="Community cards"></div>
+        </div>
+        <div id="human-row" class="human-row"></div>
+      </div>
+
+      <div id="banner" class="banner" hidden></div>
+      <div id="hand-strength" class="hand-strength" aria-live="polite"></div>
+
+      <div id="action-bar" class="action-bar" hidden>
+        <div class="raise-row">
+          <div class="presets">
+            <button class="btn preset" data-preset="min">Min</button>
+            <button class="btn preset" data-preset="half">½ Pot</button>
+            <button class="btn preset" data-preset="pot">Pot</button>
+            <button class="btn preset" data-preset="allin">All-in</button>
+          </div>
+          <div class="slider-wrap">
+            <input type="range" id="raise-slider" aria-label="Raise amount">
+            <span id="raise-amount">0</span>
+          </div>
+        </div>
+        <div class="action-row">
+          <button class="btn action fold" id="btn-fold">Fold</button>
+          <button class="btn action check" id="btn-check-call">Check</button>
+          <button class="btn action raise" id="btn-raise">Raise</button>
+        </div>
+      </div>
+
+      <div id="next-hand-row" class="next-hand-row" hidden>
+        <button class="btn next-hand-btn" id="btn-next-hand">Next Hand ▶</button>
+      </div>
+
+      <details id="action-log-wrap" class="action-log-wrap">
+        <summary>Hand history</summary>
+        <div id="action-log" class="action-log"></div>
+      </details>
+    </section>
+  </main>
+
+  <!-- Tutorial coach -->
+  <div id="spotlight" class="spotlight" hidden></div>
+  <aside id="coach" class="coach" hidden aria-live="polite">
+    <div class="coach-header">
+      <span id="coach-lesson-title" class="coach-lesson-title"></span>
+      <div id="coach-progress" class="coach-progress"></div>
+    </div>
+    <div id="coach-text" class="coach-text"></div>
+    <div id="coach-cards" class="coach-cards"></div>
+    <div id="coach-choices" class="coach-choices"></div>
+    <div class="coach-actions">
+      <button class="btn coach-exit" id="coach-exit">✕ Exit lesson</button>
+      <button class="btn coach-next" id="coach-next">Next ▶</button>
+    </div>
+  </aside>
+
+  <!-- Win overlay -->
+  <div id="win-overlay" class="win-overlay" hidden>
+    <div class="win-content">
+      <h2 id="win-title">🎉 Nice!</h2>
+      <p id="win-text"></p>
+      <button class="btn win-btn" id="btn-win-continue">Continue</button>
+    </div>
+  </div>
+
+  <!-- Bust overlay -->
+  <div id="bust-overlay" class="game-over-overlay" hidden>
+    <div class="game-over-content">
+      <h2>Out of chips!</h2>
+      <p>The table is still running. Buy back in?</p>
+      <button class="btn game-over-btn" id="btn-play-again">Rebuy 1000</button>
+    </div>
+  </div>
+
+  <script type="module" src="poker.js"></script>
+</body>
+</html>

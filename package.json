@@ -1,0 +1,14 @@
+{
+  "name": "gameroom",
+  "private": true,
+  "type": "module",
+  "description": "Dev tooling only. The site itself is static and has no build step.",
+  "scripts": {
+    "test": "node --test \"tests/unit/*.test.mjs\"",
+    "e2e": "playwright test",
+    "serve": "node tests/serve.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0"
+  }
+}
