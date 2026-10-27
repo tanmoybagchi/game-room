@@ -117,6 +117,33 @@ test.describe('Tutorial course', () => {
     await expect(page.locator('#action-bar')).toBeVisible();
   });
 
+  test('Back returns to the previous coach message', async ({ page }) => {
+    await openTutorial(page);
+    await startLesson(page, 'hand-rankings');
+    await expect(page.locator('#coach-back')).toBeHidden(); // first message
+    const first = await page.locator('#coach-text').innerText();
+    await page.click('#coach-next');
+    await expect(page.locator('#coach-back')).toBeVisible();
+    expect(await page.locator('#coach-text').innerText()).not.toBe(first);
+    await page.click('#coach-back');
+    await expect(page.locator('#coach-text')).toHaveText(first);
+    await expect(page.locator('#coach-back')).toBeHidden();
+    await page.click('#coach-next'); // still moves forward afterwards
+    await expect(page.locator('#coach-back')).toBeVisible();
+  });
+
+  test('Back from a later talk step rebuilds the dealt hand', async ({ page }) => {
+    await openTutorial(page);
+    await startLesson(page, 'betting-actions');
+    await page.waitForFunction(() => !document.getElementById('coach-next').hidden);
+    for (let i = 0; i < 2; i++) { await page.click('#coach-next'); await page.waitForTimeout(50); }
+    await page.click('#coach-back');
+    await page.waitForTimeout(200);
+    const s = await state(page);
+    expect(s.players[0].holeCards).toHaveLength(2);
+    await expect(page.locator('#coach')).toBeVisible();
+  });
+
   test('Exit returns to the lesson list without completing', async ({ page }) => {
     await openTutorial(page);
     await startLesson(page, 'position');

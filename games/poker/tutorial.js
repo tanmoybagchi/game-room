@@ -10,6 +10,7 @@ import { legalActions, maxBet, potTotal } from './engine.js';
 const $ = id => document.getElementById(id);
 
 const TALK_STEPS = new Set(['say', 'highlight', 'quiz', 'showCards', 'endLesson']);
+const AWAIT_STEPS = new Set(['awaitAction', 'awaitStreet', 'awaitTurn', 'awaitHandOver']);
 const COUNTED = new Set(['say', 'highlight', 'quiz', 'showCards', 'awaitAction', 'awaitHandOver', 'endLesson']);
 
 // Named spotlight targets -> selectors (functions receive engine state)
@@ -113,26 +114,77 @@ export const tutorial = {
     if (this._wired) return;
     this._wired = true;
     $('coach-next').addEventListener('click', () => this.pending?.type === 'next' && this.resolvePending());
+    $('coach-back').addEventListener('click', () => this.back());
     $('coach-exit').addEventListener('click', () => { const ctx = this.ctx; this.exit(); ctx.exitToLessons(); });
     window.addEventListener('resize', () => this._spotTarget && this.spotlight(this._spotTarget));
   },
 
   // ---------- runner ----------
-  async run() {
+  /**
+   * Run the lesson from step `from`. When `from > 0` the table is first rebuilt
+   * silently: every earlier botScript is re-applied and the most recent rigDeck
+   * is re-dealt, so the hand matches what the coach expects at `from`.
+   */
+  async run(from = 0) {
     const id = ++this.runId;
     this.active = true;
     const steps = this.lesson.steps;
     const counted = steps.filter(s => COUNTED.has(s.type)).length;
-    let done = 0;
-    for (let i = 0; i < steps.length; i++) {
+    if (from > 0) {
+      let lastRig = -1;
+      steps.forEach((s, i) => { if (i < from && s.type === 'rigDeck') lastRig = i; });
+      for (let i = 0; i < from; i++) {
+        if (steps[i].type === 'botScript' || i === lastRig) await this.runStep(steps[i]);
+        if (this.runId !== id) return;
+      }
+    }
+    for (let i = from; i < steps.length; i++) {
       if (this.runId !== id) return;
       const step = steps[i];
       this.stepIdx = i;
-      if (COUNTED.has(step.type)) this.renderProgress(counted, done);
+      if (COUNTED.has(step.type)) this.renderProgress(counted, steps.slice(0, i).filter(s => COUNTED.has(s.type)).length);
       await this.runStep(step);
       if (this.runId !== id) return;
-      if (COUNTED.has(step.type)) done++;
     }
+  },
+
+  /** Index of the talking step before `idx`, or -1. */
+  prevTalkStep(idx) {
+    const steps = this.lesson.steps;
+    for (let i = idx - 1; i >= 0; i--) if (TALK_STEPS.has(steps[i].type)) return i;
+    return -1;
+  },
+
+  canGoBack() {
+    if (!this.active || !this.lesson) return false;
+    const step = this.lesson.steps[this.stepIdx];
+    return TALK_STEPS.has(step.type) && this.prevTalkStep(this.stepIdx) >= 0;
+  },
+
+  /** Return to the previous coach message, rebuilding the table to match it. */
+  back() {
+    if (!this.canGoBack()) return;
+    const steps = this.lesson.steps;
+    const target = this.prevTalkStep(this.stepIdx);
+    // Steps that need the player cannot be skipped silently: land on the first one after the last deal.
+    let lastRig = -1;
+    steps.forEach((s, i) => { if (i < target && s.type === 'rigDeck') lastRig = i; });
+    let land = target;
+    for (let i = lastRig + 1; i < target; i++) {
+      if (AWAIT_STEPS.has(steps[i].type)) { land = i; break; }
+    }
+    const ctx = this.ctx;
+    this.runId++;
+    this.pending = null;
+    this.holdBots = true;
+    this.botQueues = {};
+    this.botDefault = 'check-call';
+    this.allow = [];
+    this.spotlight(null);
+    this.hideCoach();
+    ctx.cancelHand();
+    ctx.renderTable({ animate: false });
+    this.run(land);
   },
 
   renderProgress(total, done) {
@@ -406,6 +458,7 @@ export const tutorial = {
     if (!text && !next && !cards && !keepCards) { this.hideCoach(); return; }
     c.hidden = false;
     c.classList.toggle('up', up);
+    $('coach-back').hidden = !this.canGoBack();
     const t = $('coach-text');
     t.innerHTML = text || '';
     t.className = 'coach-text' + (feedback ? ` coach-feedback ${feedback}` : '');

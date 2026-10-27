@@ -670,6 +670,7 @@
 
 .coach-actions .btn { min-height: 44px; }
 .coach-exit { margin-right: auto; }
+.coach-back { font-weight: 700; }
 .coach-next { background: var(--accent); border-color: var(--accent); font-weight: 800; }
 .coach-next:hover { background: var(--accent-hover); }
 .coach-actions .btn[hidden] { display: none; }
